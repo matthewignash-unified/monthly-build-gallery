@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Monthly Build: Submission Archive</title>
+<style>
+  :root {
+    --accent: #b4531f;            /* change this one value to match the site theme */
+    --accent-dark: color-mix(in srgb, var(--accent) 80%, black);
+    --accent-soft: color-mix(in srgb, var(--accent) 12%, white);
+    --bg: #faf8f5;
+    --card: #ffffff;
+    --ink: #2b2420;
+    --muted: #6f655d;
+    --line: #e7e0d8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px 16px 40px; }
+  a { color: var(--accent-dark); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  header h1 { font-size: 1.35rem; margin: 0; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
+  .badge-sample {
+    display: inline-block; margin-left: 8px; padding: 1px 8px; vertical-align: 3px;
+    font-size: .68rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
+    color: var(--accent-dark); border: 1px dashed var(--accent); border-radius: 999px;
+  }
+
+  .featured { margin-top: 18px; }
+  .featured h2, .section-label {
+    font-size: .8rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin: 0 0 8px;
+  }
+  .featured-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .feat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .feat-frame { position: relative; aspect-ratio: 16 / 10; background: var(--accent-soft); }
+  .feat-frame object, .feat-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .feat-fallback {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 12px;
+  }
+  .feat-fallback img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .feat-fallback .btn { position: relative; }
+  .feat-meta { display: flex; align-items: baseline; gap: 8px; padding: 10px 12px; flex-wrap: wrap; }
+  .feat-meta strong { font-size: .95rem; }
+  .feat-meta .who { color: var(--muted); font-size: .85rem; }
+  .feat-meta a { margin-left: auto; font-size: .85rem; white-space: nowrap; }
+  .feat-tag {
+    align-self: flex-start; margin: 10px 0 -4px 12px; padding: 2px 9px;
+    background: var(--accent); color: #fff; font-size: .68rem; font-weight: 700;
+    letter-spacing: .05em; text-transform: uppercase; border-radius: 999px;
+  }
+
+  .filters { margin: 22px 0 6px; display: flex; flex-direction: column; gap: 10px; }
+  .filters-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .filters input[type="search"], .filters select {
+    font: inherit; color: inherit; background: var(--card);
+    border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px;
+  }
+  .filters input[type="search"] { flex: 1 1 200px; min-width: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font: inherit; font-size: .82rem; cursor: pointer;
+    background: var(--card); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px;
+  }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filters-status { display: flex; align-items: center; gap: 12px; font-size: .85rem; color: var(--muted); }
+  #clearFilters {
+    font: inherit; font-size: .85rem; cursor: pointer; color: var(--accent-dark);
+    background: none; border: none; padding: 2px 4px; text-decoration: underline;
+  }
+  #clearFilters[hidden] { display: none; }
+
+  .grid { margin-top: 12px; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .shot { aspect-ratio: 16 / 9; background: var(--accent-soft); position: relative; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ph {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 2.6rem; font-weight: 700; color: var(--accent);
+    background: linear-gradient(135deg, var(--accent-soft), color-mix(in srgb, var(--accent) 26%, white));
+  }
+  .card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card h3 { margin: 0; font-size: 1.02rem; }
+  .byline { color: var(--muted); font-size: .84rem; }
+  .need { margin: 0; font-size: .88rem; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .pill {
+    font-size: .74rem; background: var(--accent-soft); color: var(--accent-dark);
+    border-radius: 999px; padding: 2px 9px;
+  }
+  .builtwith { font-size: .8rem; color: var(--muted); }
+  .actions { margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; gap: 7px; }
+  .btn {
+    font: inherit; font-size: .84rem; font-weight: 600; cursor: pointer; text-decoration: none;
+    border-radius: 8px; padding: 6px 12px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink);
+  }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn:hover { border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-dark); }
+
+  .empty {
+    margin: 40px auto; max-width: 420px; text-align: center; color: var(--muted);
+  }
+  .empty .big { font-size: 2rem; }
+
+  dialog {
+    border: none; border-radius: 14px; padding: 0;
+    width: min(640px, calc(100vw - 32px)); max-height: 85vh;
+    color: var(--ink);
+  }
+  dialog::backdrop { background: rgba(43, 36, 32, .55); }
+  .modal-head {
+    display: flex; align-items: start; gap: 12px;
+    padding: 16px 18px 0;
+  }
+  .modal-head h2 { margin: 0; font-size: 1.15rem; flex: 1; }
+  .modal-close {
+    font: inherit; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    background: var(--accent-soft); color: var(--accent-dark);
+    border: none; border-radius: 8px; padding: 6px 10px;
+  }
+  .modal-body { padding: 4px 18px 18px; }
+  .modal-body .byline { margin-bottom: 10px; }
+  .journey-text { white-space: pre-wrap; font-size: .92rem; margin: 0 0 12px; }
+  .journey-link { font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The Monthly Build: Submission Archive
+      <span id="sampleBadge" class="badge-sample" hidden>Sample data</span>
+    </h1>
+    <p>Tools built by educators, for educators — one small build at a time.</p>
+  </header>
+
+  <section id="featured" class="featured" hidden aria-label="Featured builds">
+    <h2>Featured this round</h2>
+    <div id="featuredGrid" class="featured-grid"></div>
+  </section>
+
+  <section class="filters" aria-label="Filter submissions">
+    <div class="filters-row">
+      <input id="search" type="search" placeholder="Search tools, needs, names…" aria-label="Search submissions">
+      <select id="monthSelect" aria-label="Filter by month">
+        <option value="">All months</option>
+      </select>
+    </div>
+    <div id="chips" class="chips" role="group" aria-label="Filter by tag"></div>
+    <div class="filters-status">
+      <span id="count" aria-live="polite"></span>
+      <button id="clearFilters" hidden>Clear filters</button>
+    </div>
+  </section>
+
+  <div id="grid" class="grid"></div>
+  <div id="emptyState" class="empty" hidden></div>
+</div>
+
+<dialog id="journeyModal" aria-labelledby="modalTitle">
+  <div class="modal-head">
+    <h2 id="modalTitle"></h2>
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="byline" id="modalByline"></div>
+    <p class="journey-text" id="modalText"></p>
+    <a class="journey-link" id="modalLink" target="_blank" rel="noopener" hidden>Read the full prompt journey ↗</a>
+  </div>
+</dialog>
+
+<script src="sample-data.js"></script>
+<script>
+// ── Configuration ────────────────────────────────────────────────────────────
+// Paste the Google Sheet URL here once the sheet exists. Accepts either the
+// "File → Share → Publish to web" CSV link, or a normal sheet URL (the sheet
+// must be shared "anyone with the link"). Leave empty to show sample data.
+const SHEET_URL = "";
+// ─────────────────────────────────────────────────────────────────────────────
+
+const EMBED_TIMEOUT_MS = 8000;
+
+const state = { tags: new Set(), month: "", query: "" };
+let approved = [];
+
+function sheetCsvUrl(url) {
+  if (url.includes("output=csv")) return url;
+  const pub = url.match(/\/spreadsheets\/d\/e\/([\w-]+)\/pub/);
+  if (pub) return `https://docs.google.com/spreadsheets/d/e/${pub[1]}/pub?output=csv`;
+  const doc = url.match(/\/spreadsheets\/d\/([\w-]+)/);
+  if (doc) return `https://docs.google.com/spreadsheets/d/${doc[1]}/gviz/tq?tqx=out:csv`;
+  return url;
+}
+
+function parseCsv(text) {
+  const rows = [[]];
+  let field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c !== '"') field += c;
+      else if (text[i + 1] === '"') { field += '"'; i++; }
+      else inQuotes = false;
+    }
+    else if (c === '"') inQuotes = true;
+    else if (c === ",") { rows[rows.length - 1].push(field); field = ""; }
+    else if (c === "\n") { rows[rows.length - 1].push(field); field = ""; rows.push([]); }
+    else if (c !== "\r") field += c;
+  }
+  rows[rows.length - 1].push(field);
+  if (rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === "") rows.pop();
+  return rows;
+}
+
+function rowsToSubmissions(rows) {
+  const headers = rows[0].map(h => h.trim().toLowerCase());
+  return rows.slice(1).map(cells =>
+    Object.fromEntries(headers.map((h, i) => [h, (cells[i] || "").trim()]))
+  );
+}
+
+function normalize(raw) {
+  const s = {};
+  for (const key of ["name", "role_context", "month", "tool_name", "need", "tool_url",
+                     "repo_url", "prompt_journey", "journey_url", "screenshot_url",
+                     "tags", "ai_tools", "approved", "featured"]) {
+    s[key] = String(raw[key] || "").trim();
+  }
+  s.tagList = s.tags.split(",").map(t => t.trim().toLowerCase()).filter(Boolean);
+  return s;
+}
+
+function isYes(value) { return value.trim().toLowerCase() === "yes"; }
+
+function safeUrl(value) {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") ? url.href : null;
+  } catch { return null; }
+}
+
+const MONTHS = ["january","february","march","april","may","june",
+                "july","august","september","october","november","december"];
+function monthValue(label) {
+  const [name, year] = label.toLowerCase().split(/\s+/);
+  return (parseInt(year, 10) || 0) * 12 + MONTHS.indexOf(name);
+}
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text) node.textContent = text;
+  return node;
+}
+
+// ── Featured strip ───────────────────────────────────────────────────────────
+function screenshotOrPlaceholder(s, container) {
+  const url = safeUrl(s.screenshot_url);
+  if (url) {
+    const img = el("img");
+    img.src = url;
+    img.alt = `Screenshot of ${s.tool_name}`;
+    container.appendChild(img);
+  } else {
+    container.appendChild(el("div", "ph", (s.tool_name[0] || "?").toUpperCase()));
+  }
+}
+
+function featFallback(s, toolUrl) {
+  const fb = el("div", "feat-fallback");
+  screenshotOrPlaceholder(s, fb);
+  if (toolUrl) {
+    const open = el("a", "btn btn-primary", "Open the tool ↗");
+    open.href = toolUrl;
+    open.target = "_blank";
+    open.rel = "noopener";
+    fb.appendChild(open);
+  }
+  return fb;
+}
+
+function featCard(s) {
+  const card = el("article", "feat");
+  card.appendChild(el("span", "feat-tag", "Featured"));
+  const frame = el("div", "feat-frame");
+  card.appendChild(frame);
+  const toolUrl = safeUrl(s.tool_url);
+  if (toolUrl) embedTool(s, toolUrl, frame);
+  else frame.appendChild(featFallback(s, null));
+
+  const meta = el("div", "feat-meta");
+  meta.appendChild(el("strong", "", s.tool_name));
+  meta.appendChild(el("span", "who", s.name));
+  if (toolUrl) {
+    const link = el("a", "", "Open the tool ↗");
+    link.href = toolUrl;
+    link.target = "_blank";
+    link.rel = "noopener";
+    meta.appendChild(link);
+  }
+  card.appendChild(meta);
+  return card;
+}
+
+// <object> (unlike <iframe>) fires "error" when a site refuses embedding via
+// X-Frame-Options / CSP or the host is unreachable, so we can swap in the
+// screenshot fallback. Verified in Chromium: blocked and dead URLs fire
+// "error"; embeddable pages fire "load".
+function embedTool(s, toolUrl, frame) {
+  const embed = document.createElement("object");
+  embed.type = "text/html";
+  embed.title = `Live preview of ${s.tool_name}`;
+  let settled = false;
+  const fallBack = () => {
+    if (settled) return;
+    settled = true;
+    embed.remove();
+    frame.appendChild(featFallback(s, toolUrl));
+  };
+  embed.addEventListener("load", () => { settled = true; });
+  embed.addEventListener("error", fallBack);
+  setTimeout(fallBack, EMBED_TIMEOUT_MS);
+  embed.data = toolUrl;
+  frame.appendChild(embed);
+}
+
+function renderFeatured(subs) {
+  const featured = subs.filter(s => isYes(s.featured)).slice(0, 3);
+  if (!featured.length) return;
+  document.getElementById("featured").hidden = false;
+  const grid = document.getElementById("featuredGrid");
+  featured.forEach(s => grid.appendChild(featCard(s)));
+}
+
+// ── Cards ────────────────────────────────────────────────────────────────────
+function actionLink(label, url, primary) {
+  const link = el("a", primary ? "btn btn-primary" : "btn", label);
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener";
+  return link;
+}
+
+function card(s) {
+  const node = el("article", "card");
+  const shot = el("div", "shot");
+  screenshotOrPlaceholder(s, shot);
+  node.appendChild(shot);
+
+  const body = el("div", "card-body");
+  body.appendChild(el("h3", "", s.tool_name));
+  body.appendChild(el("div", "byline", [s.name, s.role_context].filter(Boolean).join(" · ")));
+  body.appendChild(el("p", "need", s.need));
+
+  if (s.tagList.length) {
+    const pills = el("div", "pills");
+    s.tagList.forEach(t => pills.appendChild(el("span", "pill", t)));
+    body.appendChild(pills);
+  }
+  if (s.ai_tools) body.appendChild(el("div", "builtwith", `Built with ${s.ai_tools}`));
+
+  const actions = el("div", "actions");
+  const toolUrl = safeUrl(s.tool_url);
+  const repoUrl = safeUrl(s.repo_url);
+  if (toolUrl) actions.appendChild(actionLink("Open the tool", toolUrl, true));
+  if (repoUrl) actions.appendChild(actionLink("Code", repoUrl, false));
+  if (s.prompt_journey || safeUrl(s.journey_url)) {
+    const btn = el("button", "btn", "Prompt journey");
+    btn.addEventListener("click", () => openJourney(s));
+    actions.appendChild(btn);
+  }
+  if (actions.children.length) body.appendChild(actions);
+
+  node.appendChild(body);
+  return node;
+}
+
+// ── Modal ────────────────────────────────────────────────────────────────────
+const modal = document.getElementById("journeyModal");
+function openJourney(s) {
+  document.getElementById("modalTitle").textContent = `Prompt journey: ${s.tool_name}`;
+  document.getElementById("modalByline").textContent =
+    [s.name, s.role_context].filter(Boolean).join(" · ");
+  document.getElementById("modalText").textContent = s.prompt_journey;
+  const link = document.getElementById("modalLink");
+  const journeyUrl = safeUrl(s.journey_url);
+  link.hidden = !journeyUrl;
+  if (journeyUrl) link.href = journeyUrl;
+  modal.showModal();
+  modal.scrollTop = 0;
+}
+document.getElementById("modalClose").addEventListener("click", () => modal.close());
+modal.addEventListener("click", e => { if (e.target === modal) modal.close(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && modal.open) modal.close();
+});
+
+// ── Filters ──────────────────────────────────────────────────────────────────
+function matches(s) {
+  if (state.month && s.month !== state.month) return false;
+  for (const tag of state.tags) if (!s.tagList.includes(tag)) return false;
+  if (!state.query) return true;
+  return [s.tool_name, s.need, s.name, s.ai_tools]
+    .some(v => v.toLowerCase().includes(state.query));
+}
+
+function hasActiveFilters() {
+  return state.tags.size > 0 || state.month !== "" || state.query !== "";
+}
+
+function render() {
+  const visible = approved.filter(matches);
+  const grid = document.getElementById("grid");
+  grid.replaceChildren(...visible.map(card));
+  document.getElementById("count").textContent =
+    `Showing ${visible.length} of ${approved.length} builds`;
+  document.getElementById("clearFilters").hidden = !hasActiveFilters();
+  const empty = document.getElementById("emptyState");
+  empty.hidden = visible.length > 0;
+  if (!visible.length) showEmpty(empty);
+}
+
+function showEmpty(empty) {
+  empty.replaceChildren(el("div", "big", "🔎"),
+    el("p", "", approved.length
+      ? "No builds match those filters. Try clearing one or two."
+      : "No submissions yet — check back after this month's challenge!"));
+}
+
+function buildFilterBar() {
+  const months = [...new Set(approved.map(s => s.month).filter(Boolean))]
+    .sort((a, b) => monthValue(b) - monthValue(a));
+  const select = document.getElementById("monthSelect");
+  months.forEach(m => select.appendChild(new Option(m, m)));
+
+  const tags = [...new Set(approved.flatMap(s => s.tagList))].sort();
+  const chips = document.getElementById("chips");
+  tags.forEach(tag => {
+    const chip = el("button", "chip", tag);
+    chip.setAttribute("aria-pressed", "false");
+    chip.addEventListener("click", () => {
+      const on = state.tags.has(tag);
+      state.tags[on ? "delete" : "add"](tag);
+      chip.setAttribute("aria-pressed", String(!on));
+      render();
+    });
+    chips.appendChild(chip);
+  });
+
+  document.getElementById("search").addEventListener("input", e => {
+    state.query = e.target.value.trim().toLowerCase();
+    render();
+  });
+  select.addEventListener("change", e => { state.month = e.target.value; render(); });
+  document.getElementById("clearFilters").addEventListener("click", clearFilters);
+}
+
+function clearFilters() {
+  state.tags.clear();
+  state.month = "";
+  state.query = "";
+  document.getElementById("search").value = "";
+  document.getElementById("monthSelect").value = "";
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "false"));
+  render();
+}
+
+// ── Load ─────────────────────────────────────────────────────────────────────
+async function loadSubmissions() {
+  if (!SHEET_URL) {
+    document.getElementById("sampleBadge").hidden = false;
+    return window.SAMPLE_SUBMISSIONS;
+  }
+  const response = await fetch(sheetCsvUrl(SHEET_URL));
+  if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
+  return rowsToSubmissions(parseCsv(await response.text()));
+}
+
+loadSubmissions()
+  .then(rows => {
+    approved = rows.map(normalize).filter(s => isYes(s.approved));
+    renderFeatured(approved);
+    buildFilterBar();
+    render();
+  })
+  .catch(() => {
+    const empty = document.getElementById("emptyState");
+    empty.hidden = false;
+    empty.replaceChildren(el("div", "big", "⚠️"),
+      el("p", "", "Couldn't load submissions right now. Please refresh to try again."));
+  });
+</script>
+</body>
+</html>

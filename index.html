@@ -100,6 +100,23 @@
   .card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .card h3 { margin: 0; font-size: 1.02rem; }
   .byline { color: var(--muted); font-size: .84rem; }
+  .name-btn {
+    font: inherit; cursor: pointer; padding: 0;
+    background: none; border: none; color: var(--accent-dark);
+    text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px;
+  }
+  .name-btn[aria-pressed="true"] { font-weight: 700; text-decoration-style: solid; }
+  .builder-site {
+    display: inline-block; margin-left: 4px; padding: 0 5px;
+    font-size: .8rem; text-decoration: none;
+    color: var(--accent-dark); background: var(--accent-soft); border-radius: 5px;
+  }
+  .builder-chip {
+    font: inherit; font-size: .82rem; cursor: pointer;
+    background: var(--accent); color: #fff;
+    border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px;
+  }
+  .builder-chip[hidden] { display: none; }
   .need { margin: 0; font-size: .88rem; }
   .pills { display: flex; flex-wrap: wrap; gap: 5px; }
   .pill {
@@ -168,6 +185,7 @@
     <div id="chips" class="chips" role="group" aria-label="Filter by tag"></div>
     <div class="filters-status">
       <span id="count" aria-live="polite"></span>
+      <button id="builderChip" class="builder-chip" hidden></button>
       <button id="clearFilters" hidden>Clear filters</button>
     </div>
   </section>
@@ -194,20 +212,23 @@
 // Paste the Google Sheet URL here once the sheet exists. Accepts either the
 // "File → Share → Publish to web" CSV link, or a normal sheet URL (the sheet
 // must be shared "anyone with the link"). Leave empty to show sample data.
-const SHEET_URL = "";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRs7KsyG7UWOQs-XMPmi14vjhLbmCEKdNpEGFxBKQ6R7YJaXCkpni7fZRNt8oPcL_bmbqViNgn1R1Ve/pubhtml?gid=571460672&single=true";
 // ─────────────────────────────────────────────────────────────────────────────
 
 const EMBED_TIMEOUT_MS = 8000;
 
-const state = { tags: new Set(), month: "", query: "" };
+const state = { tags: new Set(), month: "", query: "", builder: "" };
 let approved = [];
 
 function sheetCsvUrl(url) {
   if (url.includes("output=csv")) return url;
+  const gid = (url.match(/[?&]gid=(\d+)/) || [])[1];
   const pub = url.match(/\/spreadsheets\/d\/e\/([\w-]+)\/pub/);
-  if (pub) return `https://docs.google.com/spreadsheets/d/e/${pub[1]}/pub?output=csv`;
+  if (pub) return `https://docs.google.com/spreadsheets/d/e/${pub[1]}/pub?output=csv` +
+    (gid ? `&single=true&gid=${gid}` : "");
   const doc = url.match(/\/spreadsheets\/d\/([\w-]+)/);
-  if (doc) return `https://docs.google.com/spreadsheets/d/${doc[1]}/gviz/tq?tqx=out:csv`;
+  if (doc) return `https://docs.google.com/spreadsheets/d/${doc[1]}/gviz/tq?tqx=out:csv` +
+    (gid ? `&gid=${gid}` : "");
   return url;
 }
 
@@ -242,7 +263,7 @@ function normalize(raw) {
   const s = {};
   for (const key of ["name", "role_context", "month", "tool_name", "need", "tool_url",
                      "repo_url", "prompt_journey", "journey_url", "screenshot_url",
-                     "tags", "ai_tools", "approved", "featured"]) {
+                     "builder_link", "tags", "ai_tools", "approved", "featured"]) {
     s[key] = String(raw[key] || "").trim();
   }
   s.tagList = s.tags.split(",").map(t => t.trim().toLowerCase()).filter(Boolean);
@@ -368,7 +389,7 @@ function card(s) {
 
   const body = el("div", "card-body");
   body.appendChild(el("h3", "", s.tool_name));
-  body.appendChild(el("div", "byline", [s.name, s.role_context].filter(Boolean).join(" · ")));
+  body.appendChild(byline(s));
   body.appendChild(el("p", "need", s.need));
 
   if (s.tagList.length) {
@@ -394,6 +415,28 @@ function card(s) {
   return node;
 }
 
+function byline(s) {
+  const line = el("div", "byline");
+  if (s.name) {
+    const nameBtn = el("button", "name-btn", s.name);
+    nameBtn.title = `Show all builds by ${s.name}`;
+    nameBtn.setAttribute("aria-pressed", String(state.builder === s.name));
+    nameBtn.addEventListener("click", () => setBuilder(s.name));
+    line.appendChild(nameBtn);
+    const site = safeUrl(s.builder_link);
+    if (site) {
+      const link = el("a", "builder-site", "↗");
+      link.href = site;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.setAttribute("aria-label", `Visit ${s.name}'s site (opens in new tab)`);
+      line.appendChild(link);
+    }
+  }
+  if (s.role_context) line.appendChild(el("span", "", ` · ${s.role_context}`));
+  return line;
+}
+
 // ── Modal ────────────────────────────────────────────────────────────────────
 const modal = document.getElementById("journeyModal");
 function openJourney(s) {
@@ -416,6 +459,7 @@ document.addEventListener("keydown", e => {
 
 // ── Filters ──────────────────────────────────────────────────────────────────
 function matches(s) {
+  if (state.builder && s.name !== state.builder) return false;
   if (state.month && s.month !== state.month) return false;
   for (const tag of state.tags) if (!s.tagList.includes(tag)) return false;
   if (!state.query) return true;
@@ -424,7 +468,12 @@ function matches(s) {
 }
 
 function hasActiveFilters() {
-  return state.tags.size > 0 || state.month !== "" || state.query !== "";
+  return state.tags.size > 0 || state.month !== "" || state.query !== "" || state.builder !== "";
+}
+
+function setBuilder(name) {
+  state.builder = state.builder === name ? "" : name;
+  render();
 }
 
 function render() {
@@ -434,6 +483,9 @@ function render() {
   document.getElementById("count").textContent =
     `Showing ${visible.length} of ${approved.length} builds`;
   document.getElementById("clearFilters").hidden = !hasActiveFilters();
+  const builderChip = document.getElementById("builderChip");
+  builderChip.hidden = !state.builder;
+  if (state.builder) builderChip.textContent = `Builds by ${state.builder} ✕`;
   const empty = document.getElementById("emptyState");
   empty.hidden = visible.length > 0;
   if (!visible.length) showEmpty(empty);
@@ -472,12 +524,14 @@ function buildFilterBar() {
   });
   select.addEventListener("change", e => { state.month = e.target.value; render(); });
   document.getElementById("clearFilters").addEventListener("click", clearFilters);
+  document.getElementById("builderChip").addEventListener("click", () => setBuilder(state.builder));
 }
 
 function clearFilters() {
   state.tags.clear();
   state.month = "";
   state.query = "";
+  state.builder = "";
   document.getElementById("search").value = "";
   document.getElementById("monthSelect").value = "";
   document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "false"));
@@ -485,29 +539,27 @@ function clearFilters() {
 }
 
 // ── Load ─────────────────────────────────────────────────────────────────────
-async function loadSubmissions() {
-  if (!SHEET_URL) {
-    document.getElementById("sampleBadge").hidden = false;
-    return window.SAMPLE_SUBMISSIONS;
-  }
+async function fetchSheet() {
   const response = await fetch(sheetCsvUrl(SHEET_URL));
   if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
   return rowsToSubmissions(parseCsv(await response.text()));
 }
 
-loadSubmissions()
-  .then(rows => {
-    approved = rows.map(normalize).filter(s => isYes(s.approved));
-    renderFeatured(approved);
-    buildFilterBar();
-    render();
-  })
-  .catch(() => {
-    const empty = document.getElementById("emptyState");
-    empty.hidden = false;
-    empty.replaceChildren(el("div", "big", "⚠️"),
-      el("p", "", "Couldn't load submissions right now. Please refresh to try again."));
-  });
+async function loadSubmissions() {
+  if (SHEET_URL) {
+    try { return await fetchSheet(); }
+    catch { /* fall back to sample data below */ }
+  }
+  document.getElementById("sampleBadge").hidden = false;
+  return window.SAMPLE_SUBMISSIONS;
+}
+
+loadSubmissions().then(rows => {
+  approved = rows.map(normalize).filter(s => isYes(s.approved));
+  renderFeatured(approved);
+  buildFilterBar();
+  render();
+});
 </script>
 </body>
 </html>

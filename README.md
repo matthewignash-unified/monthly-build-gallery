@@ -18,13 +18,14 @@ Archive page.
 4. The Sheet is **published to the web**, and this page fetches it client-side
    on every load.
 
-Only rows where `approved = yes` are shown. The `email` column is never
-rendered. Expected columns (exact names):
+Only rows where `approved = yes` are shown (empty or `no` never renders).
+Submitter emails stay in the private Form responses and never reach the
+published "gallery" tab. Expected columns (exact names):
 
 ```
-timestamp, name, email, role_context, month, tool_name, need, tool_url,
-repo_url, prompt_journey, journey_url, screenshot_url, tags, ai_tools,
-license_ok, no_student_data, publish_ok, approved, featured
+timestamp, name, role_context, month, tool_name, need, tool_url, repo_url,
+prompt_journey, journey_url, screenshot_url, builder_link, tags, ai_tools,
+approved, featured
 ```
 
 ## Configuring the Sheet URL
@@ -38,8 +39,8 @@ license_ok, no_student_data, publish_ok, approved, featured
    ```
 3. Commit and push once. Done.
 
-While `SHEET_URL` is empty, the page shows the entries from `sample-data.js`
-with a "Sample data" badge.
+While `SHEET_URL` is empty — or if the sheet can't be fetched — the page shows
+the entries from `sample-data.js` with a "Sample data" badge.
 
 ## Updating content vs. updating code
 

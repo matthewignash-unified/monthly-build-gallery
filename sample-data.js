@@ -1,11 +1,10 @@
-// Sample submissions shown only while SHEET_URL in index.html is empty.
-// Field names match the planned Google Sheet columns exactly.
+// Sample submissions shown when SHEET_URL in index.html is empty or the sheet
+// cannot be fetched. Field names match the Google Sheet columns exactly.
 // The last row has approved: "no" to demonstrate that unapproved rows never render.
 window.SAMPLE_SUBMISSIONS = [
   {
     timestamp: "9/12/2026 16:04:11",
     name: "Dana Whitfield",
-    email: "dana.whitfield@example.com",
     role_context: "Years 7-9 English teacher",
     month: "September 2026",
     tool_name: "Report Comment Helper",
@@ -15,18 +14,15 @@ window.SAMPLE_SUBMISSIONS = [
     prompt_journey: "I started by asking for 'a report comment generator' and got something generic and robotic.\n\nThe breakthrough was pasting in ten of my own past comments and asking the AI to learn my voice from them. Then I added the tick-box inputs (effort, progress, next step) one at a time.\n\nBiggest lesson: describe the teacher workflow, not the software. Once I said 'I mark 30 books on a Sunday and want a comment in under 20 seconds', the design got much better.",
     journey_url: "https://example.com/journey/report-comments",
     screenshot_url: "",
+    builder_link: "https://example.com/@danawhitfield",
     tags: "feedback and comments, assessment",
     ai_tools: "Claude, GitHub Pages",
-    license_ok: "yes",
-    no_student_data: "yes",
-    publish_ok: "yes",
     approved: "yes",
     featured: "yes"
   },
   {
     timestamp: "9/14/2026 20:31:47",
     name: "Marcus Torres",
-    email: "m.torres@example.com",
     role_context: "High school chemistry teacher",
     month: "September 2026",
     tool_name: "Lab Rotation Scheduler",
@@ -36,18 +32,15 @@ window.SAMPLE_SUBMISSIONS = [
     prompt_journey: "Attempt one was a giant timetable app - far too much. I deleted it and restarted with a single question: 'given N students and K stations, rotate everyone through every station with no repeats'.\n\nFrom there I added constraints one prompt at a time: fixed partners, students who need a seated station, and the printable cards. Testing with my real class sizes caught an off-by-one that only appeared with odd numbers of students.",
     journey_url: "",
     screenshot_url: "",
+    builder_link: "",
     tags: "planning, science-specific",
     ai_tools: "Claude Code",
-    license_ok: "yes",
-    no_student_data: "yes",
-    publish_ok: "yes",
     approved: "yes",
     featured: "yes"
   },
   {
     timestamp: "9/21/2026 07:58:03",
     name: "Priya Shah",
-    email: "priya.shah@example.com",
     role_context: "Grade 4 classroom teacher",
     month: "September 2026",
     tool_name: "Fair Turns Name Picker",
@@ -57,18 +50,15 @@ window.SAMPLE_SUBMISSIONS = [
     prompt_journey: "I described the playground-fairness problem before any features, and the AI suggested the 'recently picked' weighting idea itself.\n\nMost of my iterations were about the spinning wheel feeling fun but not taking too long - class attention span is about four seconds. I also asked for the roster to live only in the browser so no student names ever leave my laptop.",
     journey_url: "",
     screenshot_url: "",
+    builder_link: "https://example.com/priya-shah-teaches",
     tags: "classroom management, games and review",
     ai_tools: "ChatGPT",
-    license_ok: "yes",
-    no_student_data: "yes",
-    publish_ok: "yes",
     approved: "yes",
     featured: ""
   },
   {
     timestamp: "10/9/2026 17:12:39",
     name: "Jonas Keller",
-    email: "j.keller@example.com",
     role_context: "Middle school science teacher",
     month: "October 2026",
     tool_name: "Exit Ticket Summarizer",
@@ -78,18 +68,15 @@ window.SAMPLE_SUBMISSIONS = [
     prompt_journey: "The first version tried to grade students, which I never wanted. I rewrote the prompt to forbid per-student output entirely - it only reports patterns across the whole class.\n\nGetting the misconception clusters right took the longest. What finally worked was giving the AI three real (anonymised) examples of the kind of summary I write for myself on a good day.",
     journey_url: "https://example.com/journey/exit-tickets",
     screenshot_url: "",
+    builder_link: "",
     tags: "assessment, data and gradebooks",
     ai_tools: "ChatGPT, GitHub Copilot",
-    license_ok: "yes",
-    no_student_data: "yes",
-    publish_ok: "yes",
     approved: "yes",
     featured: ""
   },
   {
     timestamp: "10/17/2026 21:44:55",
     name: "Aisha Bello",
-    email: "a.bello@example.com",
     role_context: "Primary literacy lead",
     month: "October 2026",
     tool_name: "Reading Log Postcards",
@@ -99,18 +86,15 @@ window.SAMPLE_SUBMISSIONS = [
     prompt_journey: "I brought the accessibility requirements to the very first prompt: dyslexia-friendly typeface, high contrast, and no walls of text. Starting there shaped everything after.\n\nThe translation feature began as a stretch goal, but a parent governor tested the Somali version and her feedback drove three rounds of fixes. Print CSS was the fiddliest part - ask for 'looks right when printed on one A5 page' very early.",
     journey_url: "",
     screenshot_url: "",
+    builder_link: "https://example.com/aisha-reads",
     tags: "parent communication, accessibility and UDL",
     ai_tools: "Claude",
-    license_ok: "yes",
-    no_student_data: "yes",
-    publish_ok: "yes",
     approved: "yes",
     featured: ""
   },
   {
     timestamp: "10/20/2026 09:15:26",
     name: "Rob Ferreira",
-    email: "r.ferreira@example.com",
     role_context: "Assistant principal",
     month: "October 2026",
     tool_name: "Duty Roster Balancer",
@@ -120,11 +104,9 @@ window.SAMPLE_SUBMISSIONS = [
     prompt_journey: "Still writing this one up.",
     journey_url: "",
     screenshot_url: "",
+    builder_link: "",
     tags: "admin and operations, planning",
     ai_tools: "Claude",
-    license_ok: "yes",
-    no_student_data: "yes",
-    publish_ok: "yes",
     approved: "no",
     featured: ""
   }

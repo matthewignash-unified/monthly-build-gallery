@@ -297,16 +297,27 @@ function el(tag, className, text) {
 }
 
 // ── Featured strip ───────────────────────────────────────────────────────────
+// Google Drive share links don't serve raw images; rewrite them to Drive's
+// thumbnail endpoint, which does. All other URLs pass through untouched.
+function screenshotSrc(value) {
+  const url = safeUrl(value);
+  if (!url) return null;
+  const drive = url.match(/^https:\/\/drive\.google\.com\/(?:file\/d\/([\w-]+)|open\?id=([\w-]+))/);
+  return drive ? `https://drive.google.com/thumbnail?id=${drive[1] || drive[2]}&sz=w1000` : url;
+}
+
 function screenshotOrPlaceholder(s, container) {
-  const url = safeUrl(s.screenshot_url);
-  if (url) {
-    const img = el("img");
-    img.src = url;
-    img.alt = `Screenshot of ${s.tool_name}`;
-    container.appendChild(img);
-  } else {
-    container.appendChild(el("div", "ph", (s.tool_name[0] || "?").toUpperCase()));
+  const placeholder = () => el("div", "ph", (s.tool_name[0] || "?").toUpperCase());
+  const src = screenshotSrc(s.screenshot_url);
+  if (!src) {
+    container.appendChild(placeholder());
+    return;
   }
+  const img = el("img");
+  img.alt = `Screenshot of ${s.tool_name}`;
+  img.addEventListener("error", () => img.replaceWith(placeholder()));
+  img.src = src;
+  container.appendChild(img);
 }
 
 function featFallback(s, toolUrl) {

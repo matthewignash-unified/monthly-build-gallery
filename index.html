@@ -40,11 +40,17 @@
     color: var(--muted); border: 1px dashed #9e9e9e; border-radius: 999px;
   }
 
-  .featured { margin-top: 18px; }
-  .featured h2, .section-label {
-    font-size: .8rem; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--muted); margin: 0 0 8px;
+  .open-full { float: right; font-size: .85rem; margin: 3px 0 0 12px; }
+  .tabs { display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line); }
+  .tab {
+    font: inherit; font-weight: 600; cursor: pointer; padding: 8px 14px;
+    background: none; border: none; border-bottom: 3px solid transparent;
+    color: var(--muted); margin-bottom: -1px;
   }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--accent-dark); border-bottom-color: var(--accent); }
+
+  .featured { margin-top: 18px; }
   .featured-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .feat {
     background: var(--card); border: 1px solid var(--line); border-radius: 12px;
@@ -167,17 +173,23 @@
 <body>
 <div class="wrap">
   <header>
+    <a id="openFull" class="open-full" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
     <h1>The Monthly Build: Submission Archive
       <span id="sampleBadge" class="badge-sample" hidden>Sample data</span>
     </h1>
     <p>Tools built by educators, for educators — one small build at a time.</p>
   </header>
 
-  <section id="featured" class="featured" hidden aria-label="Featured builds">
-    <h2>Featured this round</h2>
+  <div id="tabbar" class="tabs" role="tablist" aria-label="Gallery sections" hidden>
+    <button id="tabAll" class="tab" role="tab" aria-selected="true" aria-controls="panelAll">All builds</button>
+    <button id="tabFeatured" class="tab" role="tab" aria-selected="false" aria-controls="panelFeatured">Featured</button>
+  </div>
+
+  <section id="panelFeatured" class="featured" role="tabpanel" aria-label="Featured builds" hidden>
     <div id="featuredGrid" class="featured-grid"></div>
   </section>
 
+  <div id="panelAll" role="tabpanel" aria-label="All builds">
   <section class="filters" aria-label="Filter submissions">
     <div class="filters-row">
       <input id="search" type="search" placeholder="Search tools, needs, names…" aria-label="Search submissions">
@@ -195,6 +207,7 @@
 
   <div id="grid" class="grid"></div>
   <div id="emptyState" class="empty" hidden></div>
+  </div>
 </div>
 
 <dialog id="journeyModal" aria-labelledby="modalTitle">
@@ -333,14 +346,27 @@ function featFallback(s, toolUrl) {
   return fb;
 }
 
+function featPreview(s, toolUrl, frame) {
+  const view = el("div", "feat-fallback");
+  screenshotOrPlaceholder(s, view);
+  if (toolUrl) {
+    const load = el("button", "btn", "Load live preview");
+    load.addEventListener("click", () => {
+      frame.replaceChildren();
+      embedTool(s, toolUrl, frame);
+    });
+    view.appendChild(load);
+  }
+  return view;
+}
+
 function featCard(s) {
   const card = el("article", "feat");
   card.appendChild(el("span", "feat-tag", "Featured"));
   const frame = el("div", "feat-frame");
   card.appendChild(frame);
   const toolUrl = safeUrl(s.tool_url);
-  if (toolUrl) embedTool(s, toolUrl, frame);
-  else frame.appendChild(featFallback(s, null));
+  frame.appendChild(featPreview(s, toolUrl, frame));
 
   const meta = el("div", "feat-meta");
   meta.appendChild(el("strong", "", s.tool_name));
@@ -381,9 +407,26 @@ function embedTool(s, toolUrl, frame) {
 function renderFeatured(subs) {
   const featured = subs.filter(s => isYes(s.featured)).slice(0, 3);
   if (!featured.length) return;
-  document.getElementById("featured").hidden = false;
+  document.getElementById("tabbar").hidden = false;
   const grid = document.getElementById("featuredGrid");
   featured.forEach(s => grid.appendChild(featCard(s)));
+}
+
+const TAB_PANELS = { tabAll: "panelAll", tabFeatured: "panelFeatured" };
+function selectTab(activeId) {
+  for (const [tabId, panelId] of Object.entries(TAB_PANELS)) {
+    document.getElementById(tabId).setAttribute("aria-selected", String(tabId === activeId));
+    document.getElementById(panelId).hidden = tabId !== activeId;
+  }
+}
+for (const tabId of Object.keys(TAB_PANELS)) {
+  document.getElementById(tabId).addEventListener("click", () => selectTab(tabId));
+}
+
+if (window.self !== window.top) {
+  const openFull = document.getElementById("openFull");
+  openFull.href = window.location.href;
+  openFull.hidden = false;
 }
 
 // ── Cards ────────────────────────────────────────────────────────────────────

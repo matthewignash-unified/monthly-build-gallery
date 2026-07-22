@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Monthly Build: Submission Archive</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FBDQ9MZHMB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FBDQ9MZHMB');
+</script>
 <style>
   :root {
     /* AI Coding for Educators palette */
@@ -232,6 +239,13 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRs7KsyG7UWOQ
 // ─────────────────────────────────────────────────────────────────────────────
 
 const EMBED_TIMEOUT_MS = 8000;
+const ANALYTICS_DEBUG = false;
+
+// Events carry tool names and filter types only — never personal data.
+function track(eventName, params = {}) {
+  if (ANALYTICS_DEBUG) console.log("[analytics]", eventName, params);
+  gtag("event", eventName, params);
+}
 
 const state = { tags: new Set(), month: "", query: "", builder: "" };
 let approved = [];
@@ -352,6 +366,7 @@ function featPreview(s, toolUrl, frame) {
   if (toolUrl) {
     const load = el("button", "btn", "Load live preview");
     load.addEventListener("click", () => {
+      track("featured_loaded", { tool_name: s.tool_name });
       frame.replaceChildren();
       embedTool(s, toolUrl, frame);
     });
@@ -427,6 +442,7 @@ if (window.self !== window.top) {
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;
+  openFull.addEventListener("click", () => track("open_full_archive"));
 }
 
 // ── Cards ────────────────────────────────────────────────────────────────────
@@ -459,11 +475,22 @@ function card(s) {
   const actions = el("div", "actions");
   const toolUrl = safeUrl(s.tool_url);
   const repoUrl = safeUrl(s.repo_url);
-  if (toolUrl) actions.appendChild(actionLink("Open the tool", toolUrl));
-  if (repoUrl) actions.appendChild(actionLink("Code", repoUrl));
+  if (toolUrl) {
+    const open = actionLink("Open the tool", toolUrl);
+    open.addEventListener("click", () => track("open_tool", { tool_name: s.tool_name }));
+    actions.appendChild(open);
+  }
+  if (repoUrl) {
+    const code = actionLink("Code", repoUrl);
+    code.addEventListener("click", () => track("open_code", { tool_name: s.tool_name }));
+    actions.appendChild(code);
+  }
   if (s.prompt_journey || safeUrl(s.journey_url)) {
     const btn = el("button", "btn", "Prompt journey");
-    btn.addEventListener("click", () => openJourney(s));
+    btn.addEventListener("click", () => {
+      track("open_journey", { tool_name: s.tool_name });
+      openJourney(s);
+    });
     actions.appendChild(btn);
   }
   if (actions.children.length) body.appendChild(actions);
@@ -570,16 +597,26 @@ function buildFilterBar() {
       const on = state.tags.has(tag);
       state.tags[on ? "delete" : "add"](tag);
       chip.setAttribute("aria-pressed", String(!on));
+      track("filter_used", { filter_type: "tag" });
       render();
     });
     chips.appendChild(chip);
   });
 
+  let searchTrackTimer;
   document.getElementById("search").addEventListener("input", e => {
     state.query = e.target.value.trim().toLowerCase();
+    clearTimeout(searchTrackTimer);
+    if (state.query) {
+      searchTrackTimer = setTimeout(() => track("filter_used", { filter_type: "search" }), 800);
+    }
     render();
   });
-  select.addEventListener("change", e => { state.month = e.target.value; render(); });
+  select.addEventListener("change", e => {
+    state.month = e.target.value;
+    track("filter_used", { filter_type: "month" });
+    render();
+  });
   document.getElementById("clearFilters").addEventListener("click", clearFilters);
   document.getElementById("builderChip").addEventListener("click", () => setBuilder(state.builder));
 }

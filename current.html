@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Monthly Build: Current Challenge</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FBDQ9MZHMB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FBDQ9MZHMB');
+</script>
+<style>
+  :root {
+    /* AI Coding for Educators palette */
+    --accent: #2E7D5B;        /* brand green — safe under white text (5.0:1) */
+    --accent-dark: color-mix(in srgb, var(--accent) 80%, black);
+    --accent-light: #57BB8A;  /* decorative only — never put white text on it */
+    --tint: #EEF7F2;          /* soft section tint — dark text only */
+    --bg: #ffffff;
+    --ink: #212121;
+    --muted: #595959;
+    --line: #e0e0e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 40px; }
+  a { color: var(--accent); }
+  a:hover { color: var(--accent-dark); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
+  header h1 { font-size: 1.35rem; margin: 0; }
+
+  .challenge { margin-top: 14px; background: var(--tint); border-radius: 12px; padding: 14px 16px; }
+  .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .challenge-head h2 { margin: 0; font-size: 1.15rem; }
+  .pill {
+    font-size: .74rem; background: var(--bg); color: var(--accent-dark);
+    border-radius: 999px; padding: 2px 9px;
+  }
+  .host { color: var(--muted); font-size: .88rem; margin: 2px 0 8px; }
+  .challenge-text { margin: 6px 0; font-size: .92rem; }
+  .challenge-videos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .video-box { aspect-ratio: 16 / 9; flex: 1 1 280px; max-width: 480px; }
+  .video-box iframe { width: 100%; height: 100%; border: 0; border-radius: 8px; }
+  .btn {
+    font: inherit; font-size: .84rem; font-weight: 600; cursor: pointer; text-decoration: none;
+    border-radius: 8px; padding: 6px 12px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff;
+  }
+  .btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+  .soon { margin-top: 14px; background: var(--tint); border-radius: 12px; padding: 18px 16px; text-align: center; }
+  .soon p { margin: 0 0 6px; font-weight: 600; }
+  .soon a { font-size: .9rem; }
+
+  h2.section { font-size: 1.05rem; margin: 26px 0 10px; }
+  .steps { list-style: none; margin: 0; padding: 0; }
+  .steps li { display: flex; gap: 12px; padding: 6px 0; }
+  .week {
+    flex: 0 0 88px; font-size: .74rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--accent-dark); padding-top: 2px;
+  }
+  .steps p { margin: 0; font-size: .92rem; }
+
+  .template { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .part { border: 1px solid var(--accent-light); border-radius: 10px; padding: 10px 12px; }
+  .part h3 { margin: 0 0 2px; font-size: .95rem; color: var(--accent-dark); }
+  .part p { margin: 0; font-size: .88rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The Monthly Build: This Month's Challenge</h1>
+  </header>
+
+  <div id="card"></div>
+
+  <h2 class="section">How a month runs</h2>
+  <ol class="steps">
+    <li><span class="week">Week 1</span><p>The challenge drops: a real classroom need and a short intro from the month's host.</p></li>
+    <li><span class="week">Weeks 1–3</span><p>Build window: make your tool with your AI assistant, iterating as you test it in class.</p></li>
+    <li><span class="week">Week 4</span><p>Submissions close and finished builds join the archive.</p></li>
+    <li><span class="week">Final week</span><p>A 60-minute recorded share-out: see what everyone built and hear their prompt journeys.</p></li>
+  </ol>
+
+  <h2 class="section">Every submission has four parts</h2>
+  <div class="template">
+    <div class="part"><h3>The need</h3><p>The classroom problem you set out to solve, in plain words.</p></div>
+    <div class="part"><h3>The tool</h3><p>A link to your working build that anyone can try.</p></div>
+    <div class="part"><h3>The prompt journey</h3><p>What you asked, what went wrong, and what you changed.</p></div>
+    <div class="part"><h3>The code</h3><p>Your repo, openly licensed so other teachers can remix it.</p></div>
+  </div>
+</div>
+
+<script>
+// ── Configuration ────────────────────────────────────────────────────────────
+// Published-CSV URL of the challenges sheet. Columns: month, title, host_name,
+// host_context, host_link, need, challenge, video_url, recording_url, status
+const CHALLENGES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1XqCUpIiznTOvbo5JOOVrmhOFL7VdjxxSHtcmqQb3nrrlNpUwnwXJfu89Ugm5ID34CGmiCjzBskZE/pub?gid=0&single=true&output=csv";
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ANALYTICS_DEBUG = false;
+
+function track(eventName, params = {}) {
+  if (ANALYTICS_DEBUG) console.log("[analytics]", eventName, params);
+  gtag("event", eventName, params);
+}
+
+function parseCsv(text) {
+  const rows = [[]];
+  let field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c !== '"') field += c;
+      else if (text[i + 1] === '"') { field += '"'; i++; }
+      else inQuotes = false;
+    }
+    else if (c === '"') inQuotes = true;
+    else if (c === ",") { rows[rows.length - 1].push(field); field = ""; }
+    else if (c === "\n") { rows[rows.length - 1].push(field); field = ""; rows.push([]); }
+    else if (c !== "\r") field += c;
+  }
+  rows[rows.length - 1].push(field);
+  if (rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === "") rows.pop();
+  return rows;
+}
+
+function rowsToChallenges(rows) {
+  const headers = rows[0].map(h => h.trim().toLowerCase());
+  return rows.slice(1).map(cells =>
+    Object.fromEntries(headers.map((h, i) => [h, (cells[i] || "").trim()]))
+  );
+}
+
+function safeUrl(value) {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") ? url.href : null;
+  } catch { return null; }
+}
+
+function youtubeId(url) {
+  const m = url.match(/(?:youtube\.com\/(?:watch\?[^#]*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{6,})/);
+  return m ? m[1] : null;
+}
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text) node.textContent = text;
+  return node;
+}
+
+function hostLine(ch) {
+  if (!ch.host_name) return null;
+  const line = el("div", "host");
+  line.appendChild(document.createTextNode("Hosted by "));
+  const link = safeUrl(ch.host_link);
+  if (link) {
+    const a = el("a", "", ch.host_name);
+    a.href = link;
+    a.target = "_blank";
+    a.rel = "noopener";
+    line.appendChild(a);
+  } else {
+    line.appendChild(el("strong", "", ch.host_name));
+  }
+  if (ch.host_context) line.appendChild(document.createTextNode(` · ${ch.host_context}`));
+  return line;
+}
+
+function labeledText(label, text) {
+  const p = el("p", "challenge-text");
+  p.appendChild(el("strong", "", `${label}: `));
+  p.appendChild(document.createTextNode(text));
+  return p;
+}
+
+function videoButton(label, url, eventName, month) {
+  const safe = safeUrl(url);
+  if (!safe) return null;
+  const id = youtubeId(safe);
+  if (!id) {
+    const link = el("a", "btn", `▶ ${label}`);
+    link.href = safe;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.addEventListener("click", () => track(eventName, { month }));
+    return link;
+  }
+  const btn = el("button", "btn", `▶ ${label}`);
+  btn.addEventListener("click", () => {
+    track(eventName, { month });
+    const box = el("div", "video-box");
+    const frame = document.createElement("iframe");
+    frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
+    frame.title = label;
+    frame.allow = "autoplay; encrypted-media; picture-in-picture";
+    frame.allowFullscreen = true;
+    box.appendChild(frame);
+    btn.replaceWith(box);
+  });
+  return btn;
+}
+
+function renderChallenge(ch) {
+  const card = document.getElementById("card");
+  if (!ch) {
+    const soon = el("div", "soon");
+    soon.appendChild(el("p", "", "The next challenge is coming soon."));
+    const archive = el("a", "", "Browse past builds in the archive →");
+    archive.href = "index.html";
+    soon.appendChild(archive);
+    card.replaceChildren(soon);
+    return;
+  }
+  const box = el("div", "challenge");
+  const head = el("div", "challenge-head");
+  head.appendChild(el("h2", "", ch.title || "This month's challenge"));
+  head.appendChild(el("span", "pill", ch.month));
+  box.appendChild(head);
+  const host = hostLine(ch);
+  if (host) box.appendChild(host);
+  if (ch.need) box.appendChild(labeledText("The need", ch.need));
+  if (ch.challenge) box.appendChild(labeledText("The challenge", ch.challenge));
+  const videos = el("div", "challenge-videos");
+  const intro = videoButton("Watch the challenge intro", ch.video_url, "challenge_video", ch.month);
+  const shareOut = videoButton("Watch the share-out", ch.recording_url, "challenge_recording", ch.month);
+  if (intro) videos.appendChild(intro);
+  if (shareOut) videos.appendChild(shareOut);
+  if (videos.children.length) box.appendChild(videos);
+  card.replaceChildren(box);
+}
+
+fetch(CHALLENGES_URL)
+  .then(response => {
+    if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
+    return response.text();
+  })
+  .then(text => {
+    const active = rowsToChallenges(parseCsv(text))
+      .find(c => c.status.trim().toLowerCase() === "active");
+    renderChallenge(active || null);
+  })
+  .catch(() => {
+    const card = document.getElementById("card");
+    const soon = el("div", "soon");
+    soon.appendChild(el("p", "", "Couldn't load the challenge right now. Please refresh to try again."));
+    card.replaceChildren(soon);
+  });
+</script>
+</body>
+</html>

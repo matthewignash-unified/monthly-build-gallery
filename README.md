@@ -61,6 +61,33 @@ python3 -m http.server 8642
 # then open http://localhost:8642
 ```
 
+## The challenges layer
+
+A third published Google Sheet (URL in the `CHALLENGES_URL` constant in both
+`index.html` and `current.html`) describes each month's challenge. Columns:
+
+```
+month, title, host_name, host_context, host_link, need, challenge,
+video_url, recording_url, status
+```
+
+`status` is `upcoming`, `active`, or `complete`. It powers:
+
+- **Archive month headers** — filtering the archive to a month shows that
+  month's challenge above the submissions: title, host (linked when
+  `host_link` is set), the need and challenge text, and click-to-load
+  YouTube embeds for `video_url` ("Watch the challenge intro") and
+  `recording_url` ("Watch the share-out"). Empty fields are skipped.
+- **Month chips** — the unfiltered archive shows a row of challenge-month
+  chips (newest first) that apply the month filter.
+- **`current.html`** — renders only the `active` row as a compact challenge
+  card, followed by static "How a month runs" and four-part-template
+  sections. With no active row it shows "The next challenge is coming soon".
+  Embed it on the Site's challenge page like the other pages.
+
+If the challenges sheet can't be fetched, the archive renders normally
+without the challenge layer.
+
 ## The glossary page
 
 `glossary.html` is a searchable glossary of vibe-coding terms for educators,
@@ -117,7 +144,8 @@ Both pages load GA4 (`G-FBDQ9MZHMB`). Custom events — never with personal data
 archive: `open_tool`, `open_code`, `open_journey` (tool_name), `filter_used`
 (filter_type), `featured_loaded` (tool_name), `open_full_archive`; glossary:
 `glossary_search`, `glossary_category` (category), `glossary_month_view`
-(month), `demo_used` (demo_id), `code_copied` (demo_id).
+(month), `demo_used` (demo_id), `code_copied` (demo_id); challenges (archive
+and current.html): `challenge_video` and `challenge_recording` (month).
 
 ## License
 

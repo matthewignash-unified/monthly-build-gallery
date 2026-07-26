@@ -39,8 +39,8 @@ approved, featured
    ```
 3. Commit and push once. Done.
 
-While `SHEET_URL` is empty — or if the sheet can't be fetched — the page shows
-the entries from `sample-data.js` with a "Sample data" badge.
+If the sheet can't be fetched, the page shows a friendly "couldn't load —
+please refresh" message.
 
 ## Updating content vs. updating code
 
@@ -49,12 +49,12 @@ the entries from `sample-data.js` with a "Sample data" badge.
   the published Sheet directly. (Google's publish cache can take a few minutes
   to refresh.)
 - **Code updates deploy via push.** Any change to `index.html` or
-  `sample-data.js` goes live automatically when pushed to `main`, via GitHub
+  `glossary.html` goes live automatically when pushed to `main`, via GitHub
   Pages.
 
 ## Local preview
 
-Serve the folder over HTTP (needed for the sample-data script and embeds):
+Serve the folder over HTTP:
 
 ```bash
 python3 -m http.server 8642

@@ -41,11 +41,6 @@
   header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
   header h1 { font-size: 1.35rem; margin: 0; }
   header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
-  .badge-sample {
-    display: inline-block; margin-left: 8px; padding: 1px 8px; vertical-align: 3px;
-    font-size: .68rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
-    color: var(--muted); border: 1px dashed #9e9e9e; border-radius: 999px;
-  }
 
   .header-links { float: right; display: flex; gap: 14px; font-size: .85rem; margin: 3px 0 0 12px; }
   .tabs { display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line); }
@@ -180,13 +175,8 @@
 <body>
 <div class="wrap">
   <header>
-    <span class="header-links">
-      <a id="siblingNav" href="glossary.html">Glossary</a>
-      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
-    </span>
-    <h1>The Monthly Build: Submission Archive
-      <span id="sampleBadge" class="badge-sample" hidden>Sample data</span>
-    </h1>
+    <a id="openFull" class="header-links" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
+    <h1>The Monthly Build: Submission Archive</h1>
     <p>Tools built by educators, for educators — one small build at a time.</p>
   </header>
 
@@ -232,12 +222,11 @@
   </div>
 </dialog>
 
-<script src="sample-data.js"></script>
 <script>
 // ── Configuration ────────────────────────────────────────────────────────────
-// Paste the Google Sheet URL here once the sheet exists. Accepts either the
+// Published-CSV URL of the submissions sheet. Accepts either the
 // "File → Share → Publish to web" CSV link, or a normal sheet URL (the sheet
-// must be shared "anyone with the link"). Leave empty to show sample data.
+// must be shared "anyone with the link").
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRs7KsyG7UWOQs-XMPmi14vjhLbmCEKdNpEGFxBKQ6R7YJaXCkpni7fZRNt8oPcL_bmbqViNgn1R1Ve/pub?gid=571460672&single=true&output=csv";
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -441,10 +430,8 @@ for (const tabId of Object.keys(TAB_PANELS)) {
   document.getElementById(tabId).addEventListener("click", () => selectTab(tabId));
 }
 
-// Embedded in the Google Site: its own tabs navigate between pages, so hide
-// the cross-link and offer an escape hatch to the standalone page instead.
+// Embedded in the Google Site: offer an escape hatch to the standalone page.
 if (window.self !== window.top) {
-  document.getElementById("siblingNav").hidden = true;
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;
@@ -639,27 +626,25 @@ function clearFilters() {
 }
 
 // ── Load ─────────────────────────────────────────────────────────────────────
-async function fetchSheet() {
+async function loadSubmissions() {
   const response = await fetch(sheetCsvUrl(SHEET_URL));
   if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
   return rowsToSubmissions(parseCsv(await response.text()));
 }
 
-async function loadSubmissions() {
-  if (SHEET_URL) {
-    try { return await fetchSheet(); }
-    catch { /* fall back to sample data below */ }
-  }
-  document.getElementById("sampleBadge").hidden = false;
-  return window.SAMPLE_SUBMISSIONS;
-}
-
-loadSubmissions().then(rows => {
-  approved = rows.map(normalize).filter(s => isYes(s.approved));
-  renderFeatured(approved);
-  buildFilterBar();
-  render();
-});
+loadSubmissions()
+  .then(rows => {
+    approved = rows.map(normalize).filter(s => isYes(s.approved));
+    renderFeatured(approved);
+    buildFilterBar();
+    render();
+  })
+  .catch(() => {
+    const empty = document.getElementById("emptyState");
+    empty.hidden = false;
+    empty.replaceChildren(el("div", "big", "⚠️"),
+      el("p", "", "Couldn't load submissions right now. Please refresh to try again."));
+  });
 </script>
 </body>
 </html>

@@ -42,11 +42,6 @@
   header h1 { font-size: 1.35rem; margin: 0; }
   header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
   .header-links { float: right; display: flex; gap: 14px; font-size: .85rem; margin: 3px 0 0 12px; }
-  .badge-sample {
-    display: inline-block; margin-left: 8px; padding: 1px 8px; vertical-align: 3px;
-    font-size: .68rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
-    color: var(--muted); border: 1px dashed #9e9e9e; border-radius: 999px;
-  }
 
   .month-view {
     margin-top: 14px; padding: 10px 14px; background: var(--tint); border-radius: 10px;
@@ -143,13 +138,8 @@
 <body>
 <div class="wrap">
   <header>
-    <span class="header-links">
-      <a id="siblingNav" href="index.html">Archive</a>
-      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full glossary ↗</a>
-    </span>
-    <h1>The Monthly Build: Glossary
-      <span id="sampleBadge" class="badge-sample" hidden>Sample data</span>
-    </h1>
+    <a id="openFull" class="header-links" target="_blank" rel="noopener" hidden>Open the full glossary ↗</a>
+    <h1>The Monthly Build: Glossary</h1>
     <p>Plain-language terms for building classroom tools with AI. New terms are added with each month's challenge.</p>
   </header>
 
@@ -182,14 +172,6 @@ function track(eventName, params = {}) {
   if (ANALYTICS_DEBUG) console.log("[analytics]", eventName, params);
   gtag("event", eventName, params);
 }
-
-const SAMPLE_TERMS = [
-  { term: "vibe coding", definition: "Building working software by describing what you want to an AI assistant in plain language, then testing and refining together.", example: "A teacher describes a reading log tracker and has a working version the same afternoon.", category: "prompting", month_introduced: "September 2026", image_url: "", demo_id: "" },
-  { term: "accordion", definition: "A stack of headings that expand one section at a time when clicked, keeping long content compact.", example: "A homework page where each subject expands to show its tasks.", category: "app patterns", month_introduced: "September 2026", image_url: "", demo_id: "accordion" },
-  { term: "tabs", definition: "A row of labelled buttons that swap what is shown in one shared area of the page.", example: "A lab page with Instructions and Safety tabs above the same panel.", category: "app patterns", month_introduced: "September 2026", image_url: "", demo_id: "tabs" },
-  { term: "modal", definition: "An overlay that appears on top of the page and must be dismissed before continuing.", example: "A quiz app that confirms before clearing all answers.", category: "app patterns", month_introduced: "October 2026", image_url: "", demo_id: "modal" },
-  { term: "dual display", definition: "An app pattern where one tool shows a control view for the teacher and a display view for the class.", example: "A name picker where the projector shows only the chosen name.", category: "app patterns", month_introduced: "October 2026", image_url: "sample-dual-display.png", demo_id: "dual-display" }
-];
 
 // ── Demo registry ────────────────────────────────────────────────────────────
 // To add a demo: add one entry here with build(stage) — which appends the
@@ -521,16 +503,9 @@ function buildChips(terms) {
 
 // ── Load ─────────────────────────────────────────────────────────────────────
 async function loadTerms() {
-  if (GLOSSARY_SHEET_URL) {
-    try {
-      const response = await fetch(GLOSSARY_SHEET_URL);
-      if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
-      return rowsToTerms(parseCsv(await response.text()));
-    }
-    catch { /* fall back to sample data below */ }
-  }
-  document.getElementById("sampleBadge").hidden = false;
-  return SAMPLE_TERMS;
+  const response = await fetch(GLOSSARY_SHEET_URL);
+  if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
+  return rowsToTerms(parseCsv(await response.text()));
 }
 
 const monthParam = new URLSearchParams(location.search).get("month");
@@ -564,16 +539,19 @@ loadTerms().then(rows => {
   });
   buildChips(terms);
   applyFilter();
+}).catch(() => {
+  const empty = document.getElementById("emptyState");
+  empty.hidden = false;
+  empty.replaceChildren(el("div", "big", "⚠️"),
+    el("p", "", "Couldn't load the glossary right now. Please refresh to try again."));
 });
 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") document.querySelectorAll("dialog[open]").forEach(d => d.close());
 });
 
-// Embedded in the Google Site: its own tabs navigate between pages, so hide
-// the cross-link and offer an escape hatch to the standalone page instead.
+// Embedded in the Google Site: offer an escape hatch to the standalone page.
 if (window.self !== window.top) {
-  document.getElementById("siblingNav").hidden = true;
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;

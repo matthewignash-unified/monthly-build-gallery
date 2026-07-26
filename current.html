@@ -60,7 +60,14 @@
   .soon p { margin: 0 0 6px; font-weight: 600; }
   .soon a { font-size: .9rem; }
 
-  h2.section { font-size: 1.05rem; margin: 26px 0 10px; }
+  h2.section {
+    font-size: 1.05rem; margin: 28px 0 14px; padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  h2.section::after {
+    content: ""; display: block; width: 44px; height: 3px;
+    background: var(--accent); border-radius: 2px; margin-top: 5px;
+  }
   .steps { list-style: none; margin: 0; padding: 0; }
   .steps li { display: flex; gap: 12px; padding: 6px 0; }
   .week {

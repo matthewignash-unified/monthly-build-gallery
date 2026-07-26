@@ -47,7 +47,7 @@
     color: var(--muted); border: 1px dashed #9e9e9e; border-radius: 999px;
   }
 
-  .open-full { float: right; font-size: .85rem; margin: 3px 0 0 12px; }
+  .header-links { float: right; display: flex; gap: 14px; font-size: .85rem; margin: 3px 0 0 12px; }
   .tabs { display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line); }
   .tab {
     font: inherit; font-weight: 600; cursor: pointer; padding: 8px 14px;
@@ -180,7 +180,10 @@
 <body>
 <div class="wrap">
   <header>
-    <a id="openFull" class="open-full" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
+    <span class="header-links">
+      <a href="glossary.html">Glossary</a>
+      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
+    </span>
     <h1>The Monthly Build: Submission Archive
       <span id="sampleBadge" class="badge-sample" hidden>Sample data</span>
     </h1>

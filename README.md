@@ -61,6 +61,43 @@ python3 -m http.server 8642
 # then open http://localhost:8642
 ```
 
+## The glossary page
+
+`glossary.html` is a searchable glossary of vibe-coding terms for educators,
+sharing the archive's palette and iframe-friendly layout. It reads its own
+published Google Sheet (URL in the `GLOSSARY_SHEET_URL` constant at the top of
+the file). Expected columns:
+
+```
+term, definition, example, category, month_introduced, image_url, demo_id
+```
+
+- Entries render alphabetically as expandable accordions (term + category pill;
+  definition, example, image, and live demo inside).
+- `image_url` is optional: a bare filename resolves to `images/glossary/` in
+  this repo, full URLs are used as-is, and Google Drive share links are
+  rewritten to thumbnail URLs. Images that fail to load are hidden.
+- `demo_id` is optional: when it names an entry in the demo registry, a live
+  interactive demo renders with a "View the code" toggle showing a clean,
+  copyable teaching snippet.
+- **Monthly embed**: `glossary.html?month=September%202026` shows only that
+  month's terms (all expanded) under a "Key terms for …" heading — embed this
+  filtered URL on each month's challenge page.
+
+### Adding a new demo
+
+In `glossary.html`, add one entry to the `DEMOS` registry:
+
+```js
+"my-demo": {
+  build(stage) { /* append the live demo's DOM to stage */ },
+  code: `<!-- the clean teachable snippet shown under "View the code" -->`
+}
+```
+
+Then put `my-demo` in the sheet's `demo_id` column for the matching term.
+(Inside `code`, write any closing script tag as `<\/script>`.)
+
 ## Embedding in the Google Site
 
 Insert → Embed → By URL:
@@ -70,7 +107,17 @@ https://matthewignash-unified.github.io/monthly-build-gallery/
 ```
 
 The page is compact, self-scrolling, and responsive from 320px up, so it works
-inside an iframe at whatever size the Site gives it.
+inside an iframe at whatever size the Site gives it. The glossary embeds the
+same way at `…/glossary.html` (optionally with `?month=`), and both pages show
+an "Open the full …" link automatically when framed.
+
+## Analytics
+
+Both pages load GA4 (`G-FBDQ9MZHMB`). Custom events — never with personal data:
+archive: `open_tool`, `open_code`, `open_journey` (tool_name), `filter_used`
+(filter_type), `featured_loaded` (tool_name), `open_full_archive`; glossary:
+`glossary_search`, `glossary_category` (category), `glossary_month_view`
+(month), `demo_used` (demo_id), `code_copied` (demo_id).
 
 ## License
 

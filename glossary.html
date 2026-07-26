@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Monthly Build: Glossary</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FBDQ9MZHMB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FBDQ9MZHMB');
+</script>
+<style>
+  :root {
+    /* AI Coding for Educators palette */
+    --accent: #2E7D5B;        /* brand green — safe under white text (5.0:1) */
+    --accent-dark: color-mix(in srgb, var(--accent) 80%, black);
+    --accent-light: #57BB8A;  /* decorative only — never put white text on it */
+    --tint: #EEF7F2;          /* soft section tint — dark text only */
+    --bg: #ffffff;
+    --card: #ffffff;
+    --ink: #212121;
+    --muted: #595959;
+    --line: #e0e0e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 16px 16px 40px; }
+  a { color: var(--accent); }
+  a:hover { color: var(--accent-dark); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
+  header h1 { font-size: 1.35rem; margin: 0; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
+  .header-links { float: right; display: flex; gap: 14px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .badge-sample {
+    display: inline-block; margin-left: 8px; padding: 1px 8px; vertical-align: 3px;
+    font-size: .68rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
+    color: var(--muted); border: 1px dashed #9e9e9e; border-radius: 999px;
+  }
+
+  .month-view {
+    margin-top: 14px; padding: 10px 14px; background: var(--tint); border-radius: 10px;
+    display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline;
+  }
+  .month-view h2 { margin: 0; font-size: 1rem; }
+  .month-view a { font-size: .88rem; }
+
+  .filters { margin: 16px 0 12px; display: flex; flex-direction: column; gap: 10px; }
+  .filters input[type="search"] {
+    font: inherit; color: inherit; background: var(--card);
+    border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; width: 100%;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font: inherit; font-size: .82rem; cursor: pointer;
+    background: var(--tint); color: var(--ink);
+    border: 1px solid var(--accent-light); border-radius: 999px; padding: 4px 12px;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .entry {
+    border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+    margin-bottom: 10px;
+  }
+  .entry summary {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 10px 14px; cursor: pointer; font-weight: 600;
+  }
+  .entry summary::marker { color: var(--accent); }
+  .entry-body { padding: 0 14px 14px; }
+  .entry-body .definition { margin: 0 0 10px; }
+  .pill {
+    font-size: .74rem; font-weight: 400; background: var(--tint); color: var(--accent-dark);
+    border-radius: 999px; padding: 2px 9px;
+  }
+  .example {
+    background: var(--tint); border-left: 3px solid var(--accent-light);
+    border-radius: 0 8px 8px 0; padding: 8px 12px; font-size: .9rem;
+  }
+  .term-image { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; }
+
+  .btn {
+    font: inherit; font-size: .84rem; font-weight: 600; cursor: pointer; text-decoration: none;
+    border-radius: 8px; padding: 6px 12px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff;
+  }
+  .btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn-small { font-size: .78rem; padding: 4px 10px; }
+
+  .demo { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .demo-stage { padding: 12px 14px 14px; }
+  .demo-try {
+    font-size: .74rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--accent-dark); margin-bottom: 8px;
+  }
+  .demo-acc { border: 1px solid var(--accent-light); border-radius: 8px; margin-bottom: 6px; }
+  .demo-acc summary { padding: 7px 10px; cursor: pointer; font-weight: 600; font-size: .9rem; }
+  .demo-acc summary::marker { color: var(--accent); }
+  .demo-acc p { margin: 0; padding: 0 10px 8px; font-size: .88rem; }
+  .demo-tabbar { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+  .demo-tab {
+    font: inherit; font-size: .88rem; font-weight: 600; cursor: pointer; padding: 6px 12px;
+    background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted);
+  }
+  .demo-tab[aria-selected="true"] { color: var(--accent-dark); border-bottom-color: var(--accent); }
+  .demo-tabpanel { padding: 10px 4px 2px; font-size: .9rem; }
+  .demo-dialog { border: none; border-radius: 12px; padding: 18px; max-width: 320px; }
+  .demo-dialog::backdrop { background: rgba(33, 33, 33, .55); }
+  .demo-dialog p { margin: 0 0 12px; }
+  .dd-panes { display: flex; gap: 10px; flex-wrap: wrap; }
+  .dd-pane { flex: 1 1 130px; border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+  .dd-display { background: var(--tint); text-align: center; }
+  .dd-label {
+    font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .dd-name { font-size: 1.9rem; font-weight: 700; color: var(--accent-dark); }
+
+  .code-box { border-top: 1px solid var(--line); background: var(--tint); }
+  .code-box summary { padding: 7px 14px; cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--accent-dark); }
+  .code-box summary::marker { color: var(--accent); }
+  .code-bar { padding: 0 14px; }
+  .code-box pre {
+    margin: 8px 0 0; padding: 12px 14px; background: #ffffff; border-top: 1px solid var(--line);
+    overflow-x: auto; font-size: .78rem; line-height: 1.45;
+  }
+
+  .empty { margin: 40px auto; max-width: 420px; text-align: center; color: var(--muted); }
+  .empty .big { font-size: 2rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="header-links">
+      <a href="index.html">Archive</a>
+      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full glossary ↗</a>
+    </span>
+    <h1>The Monthly Build: Glossary
+      <span id="sampleBadge" class="badge-sample" hidden>Sample data</span>
+    </h1>
+    <p>Plain-language terms for building classroom tools with AI. New terms are added with each month's challenge.</p>
+  </header>
+
+  <div id="monthView" class="month-view" hidden>
+    <h2 id="monthHeading"></h2>
+    <a href="glossary.html">View the full glossary →</a>
+  </div>
+
+  <section class="filters" aria-label="Filter glossary">
+    <input id="search" type="search" placeholder="Search terms and definitions…" aria-label="Search glossary">
+    <div id="chips" class="chips" role="group" aria-label="Filter by category"></div>
+  </section>
+
+  <div id="list"></div>
+  <div id="emptyState" class="empty" hidden></div>
+</div>
+
+<script>
+// ── Configuration ────────────────────────────────────────────────────────────
+// Published-CSV URL of the glossary sheet. Columns:
+// term, definition, example, category, month_introduced, image_url, demo_id
+const GLOSSARY_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQINulIfxYQ5CB5MGjReIED8hexMv63S7GS2EYd1IsNa2LHxaEOYpZWIatZJ_rQQtNPakH5HQt7BC8V/pub?gid=932020898&single=true&output=csv";
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ANALYTICS_DEBUG = false;
+
+// Events carry categories, months, and demo ids only — never personal data
+// and never search text.
+function track(eventName, params = {}) {
+  if (ANALYTICS_DEBUG) console.log("[analytics]", eventName, params);
+  gtag("event", eventName, params);
+}
+
+const SAMPLE_TERMS = [
+  { term: "vibe coding", definition: "Building working software by describing what you want to an AI assistant in plain language, then testing and refining together.", example: "A teacher describes a reading log tracker and has a working version the same afternoon.", category: "prompting", month_introduced: "September 2026", image_url: "", demo_id: "" },
+  { term: "accordion", definition: "A stack of headings that expand one section at a time when clicked, keeping long content compact.", example: "A homework page where each subject expands to show its tasks.", category: "app patterns", month_introduced: "September 2026", image_url: "", demo_id: "accordion" },
+  { term: "tabs", definition: "A row of labelled buttons that swap what is shown in one shared area of the page.", example: "A lab page with Instructions and Safety tabs above the same panel.", category: "app patterns", month_introduced: "September 2026", image_url: "", demo_id: "tabs" },
+  { term: "modal", definition: "An overlay that appears on top of the page and must be dismissed before continuing.", example: "A quiz app that confirms before clearing all answers.", category: "app patterns", month_introduced: "October 2026", image_url: "", demo_id: "modal" },
+  { term: "dual display", definition: "An app pattern where one tool shows a control view for the teacher and a display view for the class.", example: "A name picker where the projector shows only the chosen name.", category: "app patterns", month_introduced: "October 2026", image_url: "sample-dual-display.png", demo_id: "dual-display" }
+];
+
+// ── Demo registry ────────────────────────────────────────────────────────────
+// To add a demo: add one entry here with build(stage) — which appends the
+// live demo's DOM to `stage` — and `code`, the clean teachable snippet shown
+// under "View the code". Then put the entry's key in the sheet's demo_id
+// column for the matching term.
+const DEMOS = {
+  "accordion": {
+    build(stage) {
+      [["What is an accordion?", "A stack of sections that open one click at a time — the browser's <details> element does all the work."],
+       ["When would I use one?", "Any time a page has more content than fits comfortably on screen: FAQs, weekly plans, station instructions."]]
+      .forEach(([heading, text]) => {
+        const item = el("details", "demo-acc");
+        item.appendChild(el("summary", "", heading));
+        item.appendChild(el("p", "", text));
+        stage.appendChild(item);
+      });
+    },
+    code: `<!-- Accordion: the browser does the work with <details>.
+     Click the heading (or press Enter on it) to open and close. -->
+<details>
+  <summary>What is photosynthesis?</summary>
+  <p>Plants use light energy to turn carbon dioxide and water into sugar.</p>
+</details>
+
+<details>
+  <summary>Where does it happen?</summary>
+  <p>In the chloroplasts, mostly inside leaf cells.</p>
+</details>
+
+<style>
+  details { border: 1px solid #57BB8A; border-radius: 8px; margin-bottom: 6px; }
+  summary { padding: 8px 12px; font-weight: bold; cursor: pointer; }
+  details p { margin: 0; padding: 0 12px 10px; }
+</style>`
+  },
+
+  "tabs": {
+    build(stage) {
+      const content = {
+        "Instructions": "Read the passage on page 12, then answer the two questions in your journal.",
+        "Timer": "10:00 — the class timer would count down here."
+      };
+      const bar = el("div", "demo-tabbar");
+      bar.setAttribute("role", "tablist");
+      const panel = el("div", "demo-tabpanel");
+      panel.setAttribute("role", "tabpanel");
+      Object.entries(content).forEach(([label, text], i) => {
+        const tab = el("button", "demo-tab", label);
+        tab.setAttribute("role", "tab");
+        tab.setAttribute("aria-selected", String(i === 0));
+        tab.addEventListener("click", () => {
+          bar.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", "false"));
+          tab.setAttribute("aria-selected", "true");
+          panel.textContent = text;
+        });
+        bar.appendChild(tab);
+      });
+      panel.textContent = content["Instructions"];
+      stage.append(bar, panel);
+    },
+    code: `<!-- Tabs: two buttons swap what one shared area shows. -->
+<div>
+  <button onclick="show('instructions')">Instructions</button>
+  <button onclick="show('timer')">Timer</button>
+</div>
+<div id="instructions">Read the passage, then answer the questions.</div>
+<div id="timer" hidden>10:00 — timer goes here.</div>
+
+<script>
+  // Hide both panels, then show the one that was asked for.
+  function show(id) {
+    document.getElementById('instructions').hidden = true;
+    document.getElementById('timer').hidden = true;
+    document.getElementById(id).hidden = false;
+  }
+<\/script>`
+  },
+
+  "modal": {
+    build(stage) {
+      const dialog = el("dialog", "demo-dialog");
+      dialog.appendChild(el("p", "", "This overlay sits on top of the page until you close it."));
+      const close = el("button", "btn btn-small", "Close");
+      close.addEventListener("click", () => dialog.close());
+      dialog.appendChild(close);
+      const open = el("button", "btn btn-small", "Open the overlay");
+      open.addEventListener("click", () => dialog.showModal());
+      stage.append(open, dialog);
+    },
+    code: `<!-- Modal: a button opens an overlay; Close (or Escape) dismisses it. -->
+<button onclick="document.getElementById('box').showModal()">
+  Open the overlay
+</button>
+
+<dialog id="box">
+  <p>This overlay sits on top of the page until you close it.</p>
+  <button onclick="document.getElementById('box').close()">Close</button>
+</dialog>
+
+<style>
+  dialog { border: none; border-radius: 12px; padding: 18px; }
+  dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+</style>`
+  },
+
+  "dual-display": {
+    build(stage) {
+      const NAMES = ["Ava", "Liam", "Noor", "Mateo", "Yuki", "Zara", "Owen", "Priya"];
+      const panes = el("div", "dd-panes");
+      const teacher = el("div", "dd-pane");
+      teacher.appendChild(el("div", "dd-label", "Teacher controls"));
+      const pick = el("button", "btn btn-small", "Pick a name");
+      teacher.appendChild(pick);
+      const display = el("div", "dd-pane dd-display");
+      display.appendChild(el("div", "dd-label", "Class display"));
+      const name = el("div", "dd-name", "—");
+      display.appendChild(name);
+      pick.addEventListener("click", () => {
+        name.textContent = NAMES[Math.floor(Math.random() * NAMES.length)];
+      });
+      panes.append(teacher, display);
+      stage.appendChild(panes);
+    },
+    code: `<!-- Dual display: teacher controls on the left,
+     big class-facing display on the right. -->
+<div style="display: flex; gap: 10px;">
+  <div>
+    <h3>Teacher controls</h3>
+    <button onclick="pick()">Pick a name</button>
+  </div>
+  <div style="flex: 1; text-align: center;">
+    <h3>Class display</h3>
+    <div id="name" style="font-size: 3em; font-weight: bold;">—</div>
+  </div>
+</div>
+
+<script>
+  // Sample names only — swap in your class list.
+  const names = ["Ava", "Liam", "Noor", "Mateo", "Yuki", "Zara"];
+  function pick() {
+    const chosen = names[Math.floor(Math.random() * names.length)];
+    document.getElementById('name').textContent = chosen;
+  }
+<\/script>`
+  }
+};
+
+// ── Data loading ─────────────────────────────────────────────────────────────
+function parseCsv(text) {
+  const rows = [[]];
+  let field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c !== '"') field += c;
+      else if (text[i + 1] === '"') { field += '"'; i++; }
+      else inQuotes = false;
+    }
+    else if (c === '"') inQuotes = true;
+    else if (c === ",") { rows[rows.length - 1].push(field); field = ""; }
+    else if (c === "\n") { rows[rows.length - 1].push(field); field = ""; rows.push([]); }
+    else if (c !== "\r") field += c;
+  }
+  rows[rows.length - 1].push(field);
+  if (rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === "") rows.pop();
+  return rows;
+}
+
+function rowsToTerms(rows) {
+  const headers = rows[0].map(h => h.trim().toLowerCase());
+  return rows.slice(1).map(cells =>
+    Object.fromEntries(headers.map((h, i) => [h, (cells[i] || "").trim()]))
+  );
+}
+
+function normalize(raw) {
+  const t = {};
+  for (const key of ["term", "definition", "example", "category", "month_introduced",
+                     "image_url", "demo_id"]) {
+    t[key] = String(raw[key] || "").trim();
+  }
+  return t;
+}
+
+function safeUrl(value) {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") ? url.href : null;
+  } catch { return null; }
+}
+
+// Bare filenames resolve to this repo's images/glossary/ folder; Google Drive
+// share links become thumbnail URLs (same rewrite as the archive); everything
+// else passes through untouched.
+function imageSrc(value) {
+  if (!value) return null;
+  if (!/^https?:\/\//i.test(value)) {
+    return /^[\w][\w.-]*$/.test(value) ? `images/glossary/${value}` : null;
+  }
+  const url = safeUrl(value);
+  if (!url) return null;
+  const drive = url.match(/^https:\/\/drive\.google\.com\/(?:file\/d\/([\w-]+)|open\?id=([\w-]+))/);
+  return drive ? `https://drive.google.com/thumbnail?id=${drive[1] || drive[2]}&sz=w1000` : url;
+}
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text) node.textContent = text;
+  return node;
+}
+
+// ── Entries ──────────────────────────────────────────────────────────────────
+function demoNode(id, demo) {
+  const box = el("div", "demo");
+  const stage = el("div", "demo-stage");
+  stage.appendChild(el("div", "demo-try", "Try it"));
+  demo.build(stage);
+  stage.addEventListener("click", () => track("demo_used", { demo_id: id }),
+    { once: true, capture: true });
+  box.appendChild(stage);
+  box.appendChild(codeBox(id, demo.code));
+  return box;
+}
+
+function codeBox(id, code) {
+  const details = el("details", "code-box");
+  details.appendChild(el("summary", "", "View the code"));
+  const bar = el("div", "code-bar");
+  const copy = el("button", "btn btn-small", "Copy");
+  copy.addEventListener("click", () => {
+    navigator.clipboard.writeText(code);
+    track("code_copied", { demo_id: id });
+    copy.textContent = "Copied!";
+    setTimeout(() => { copy.textContent = "Copy"; }, 1500);
+  });
+  bar.appendChild(copy);
+  const pre = el("pre");
+  const codeEl = el("code");
+  codeEl.textContent = code;
+  pre.appendChild(codeEl);
+  details.append(bar, pre);
+  return details;
+}
+
+function entryNode(t) {
+  const entry = el("details", "entry");
+  const summary = el("summary");
+  summary.appendChild(el("span", "entry-term", t.term));
+  if (t.category) summary.appendChild(el("span", "pill", t.category));
+  entry.appendChild(summary);
+
+  const body = el("div", "entry-body");
+  body.appendChild(el("p", "definition", t.definition));
+  if (t.example) {
+    const example = el("div", "example");
+    example.appendChild(el("strong", "", "Example: "));
+    example.appendChild(document.createTextNode(t.example));
+    body.appendChild(example);
+  }
+  const img = imageSrc(t.image_url);
+  if (img) {
+    const image = el("img", "term-image");
+    image.alt = `${t.term} example`;
+    image.loading = "lazy";
+    image.addEventListener("error", () => image.remove());
+    image.src = img;
+    body.appendChild(image);
+  }
+  if (DEMOS[t.demo_id]) body.appendChild(demoNode(t.demo_id, DEMOS[t.demo_id]));
+  entry.appendChild(body);
+  return entry;
+}
+
+// ── Filtering ────────────────────────────────────────────────────────────────
+const state = { query: "", category: "" };
+let rendered = [];
+
+function matches(t) {
+  if (state.category && t.category !== state.category) return false;
+  if (!state.query) return true;
+  return (t.term + " " + t.definition).toLowerCase().includes(state.query);
+}
+
+function applyFilter() {
+  let visible = 0;
+  for (const { t, node } of rendered) {
+    const show = matches(t);
+    node.hidden = !show;
+    if (show) {
+      visible++;
+      if (state.query) node.open = true;
+    }
+  }
+  const empty = document.getElementById("emptyState");
+  empty.hidden = visible > 0;
+  if (!visible) {
+    empty.replaceChildren(el("div", "big", "🔎"),
+      el("p", "", "No terms match your search. Try a different word or clear the category."));
+  }
+}
+
+function buildChips(terms) {
+  const categories = [...new Set(terms.map(t => t.category).filter(Boolean))].sort();
+  const chips = document.getElementById("chips");
+  categories.forEach(category => {
+    const chip = el("button", "chip", category);
+    chip.setAttribute("aria-pressed", "false");
+    chip.addEventListener("click", () => {
+      const on = state.category === category;
+      state.category = on ? "" : category;
+      chips.querySelectorAll(".chip").forEach(c =>
+        c.setAttribute("aria-pressed", String(c === chip && !on)));
+      if (!on) track("glossary_category", { category });
+      applyFilter();
+    });
+    chips.appendChild(chip);
+  });
+
+  let searchTrackTimer;
+  document.getElementById("search").addEventListener("input", e => {
+    state.query = e.target.value.trim().toLowerCase();
+    clearTimeout(searchTrackTimer);
+    if (state.query) searchTrackTimer = setTimeout(() => track("glossary_search"), 800);
+    applyFilter();
+  });
+}
+
+// ── Load ─────────────────────────────────────────────────────────────────────
+async function loadTerms() {
+  if (GLOSSARY_SHEET_URL) {
+    try {
+      const response = await fetch(GLOSSARY_SHEET_URL);
+      if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
+      return rowsToTerms(parseCsv(await response.text()));
+    }
+    catch { /* fall back to sample data below */ }
+  }
+  document.getElementById("sampleBadge").hidden = false;
+  return SAMPLE_TERMS;
+}
+
+const monthParam = new URLSearchParams(location.search).get("month");
+
+function monthEmptyState() {
+  const empty = document.getElementById("emptyState");
+  empty.hidden = false;
+  empty.replaceChildren(el("div", "big", "🌱"),
+    el("p", "", `No terms yet for ${monthParam} — check back once the challenge is underway!`));
+}
+
+loadTerms().then(rows => {
+  let terms = rows.map(normalize).filter(t => t.term && t.definition);
+  terms.sort((a, b) => a.term.localeCompare(b.term, undefined, { sensitivity: "base" }));
+
+  if (monthParam) {
+    document.getElementById("monthView").hidden = false;
+    document.getElementById("monthHeading").textContent = `Key terms for ${monthParam}`;
+    track("glossary_month_view", { month: monthParam });
+    terms = terms.filter(t =>
+      t.month_introduced.toLowerCase() === monthParam.trim().toLowerCase());
+    if (!terms.length) return monthEmptyState();
+  }
+
+  const list = document.getElementById("list");
+  rendered = terms.map(t => {
+    const node = entryNode(t);
+    if (monthParam) node.open = true;
+    list.appendChild(node);
+    return { t, node };
+  });
+  buildChips(terms);
+  applyFilter();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") document.querySelectorAll("dialog[open]").forEach(d => d.close());
+});
+
+if (window.self !== window.top) {
+  const openFull = document.getElementById("openFull");
+  openFull.href = window.location.href;
+  openFull.hidden = false;
+  openFull.textContent = "Open the full glossary ↗";
+  openFull.addEventListener("click", () => track("open_full_archive"));
+}
+</script>
+</body>
+</html>

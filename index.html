@@ -181,7 +181,7 @@
 <div class="wrap">
   <header>
     <span class="header-links">
-      <a href="glossary.html">Glossary</a>
+      <a id="siblingNav" href="glossary.html">Glossary</a>
       <a id="openFull" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
     </span>
     <h1>The Monthly Build: Submission Archive
@@ -441,7 +441,10 @@ for (const tabId of Object.keys(TAB_PANELS)) {
   document.getElementById(tabId).addEventListener("click", () => selectTab(tabId));
 }
 
+// Embedded in the Google Site: its own tabs navigate between pages, so hide
+// the cross-link and offer an escape hatch to the standalone page instead.
 if (window.self !== window.top) {
+  document.getElementById("siblingNav").hidden = true;
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;

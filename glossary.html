@@ -144,7 +144,7 @@
 <div class="wrap">
   <header>
     <span class="header-links">
-      <a href="index.html">Archive</a>
+      <a id="siblingNav" href="index.html">Archive</a>
       <a id="openFull" target="_blank" rel="noopener" hidden>Open the full glossary ↗</a>
     </span>
     <h1>The Monthly Build: Glossary
@@ -570,11 +570,13 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") document.querySelectorAll("dialog[open]").forEach(d => d.close());
 });
 
+// Embedded in the Google Site: its own tabs navigate between pages, so hide
+// the cross-link and offer an escape hatch to the standalone page instead.
 if (window.self !== window.top) {
+  document.getElementById("siblingNav").hidden = true;
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;
-  openFull.textContent = "Open the full glossary ↗";
   openFull.addEventListener("click", () => track("open_full_archive"));
 }
 </script>

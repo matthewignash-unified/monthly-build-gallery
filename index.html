@@ -42,7 +42,8 @@
   header h1 { font-size: 1.35rem; margin: 0; }
   header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
 
-  .header-links { float: right; display: flex; gap: 14px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .header-links { float: right; font-size: .85rem; margin: 3px 0 0 12px; }
+  .header-links[hidden] { display: none; }
   .tabs { display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line); }
   .tab {
     font: inherit; font-weight: 600; cursor: pointer; padding: 8px 14px;
@@ -147,6 +148,12 @@
 
   .month-chips { margin-top: 14px; }
   .challenge { margin-top: 14px; background: var(--tint); border-radius: 12px; padding: 14px 16px; }
+  .challenge .now-tag {
+    display: inline-block; margin-bottom: 8px; padding: 2px 9px;
+    background: var(--accent); color: #fff; font-size: .68rem; font-weight: 700;
+    letter-spacing: .05em; text-transform: uppercase; border-radius: 999px;
+  }
+  .challenge-cta { margin-top: 12px; }
   .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .challenge-head h2 { margin: 0; font-size: 1.15rem; }
   .challenge-head .pill { background: var(--card); }
@@ -645,17 +652,35 @@ function challengeContent(ch) {
   return nodes;
 }
 
-// Rebuild the header only when the selected month changes, so a loaded video
-// embed survives re-renders from typing in the search box.
+// Unfiltered, the active challenge shows as a "Now running" banner with a
+// call-to-action; filtered, the selected month's challenge heads its builds.
+// Rebuild only when the view changes, so a loaded video embed survives
+// re-renders from typing in the search box.
 function renderChallengeLayer() {
   document.getElementById("monthChips").hidden = !!state.month || !challenges.length;
+  const challenge = state.month
+    ? challenges.find(c => c.month === state.month)
+    : challenges.find(c => c.status.toLowerCase() === "active");
   const header = document.getElementById("challengeHeader");
-  const challenge = state.month ? challenges.find(c => c.month === state.month) : null;
-  const key = challenge ? challenge.month : "";
-  if (header.dataset.month === key) return;
-  header.dataset.month = key;
+  const key = challenge ? `${challenge.month}|${state.month ? "month" : "banner"}` : "";
+  if (header.dataset.view === key) return;
+  header.dataset.view = key;
   header.hidden = !challenge;
-  header.replaceChildren(...(challenge ? challengeContent(challenge) : []));
+  if (!challenge) return header.replaceChildren();
+  const nodes = challengeContent(challenge);
+  if (!state.month) {
+    nodes.unshift(el("span", "now-tag", "Now running"));
+    const cta = el("button", "btn", `See the ${challenge.month} builds →`);
+    cta.addEventListener("click", () => {
+      state.month = challenge.month;
+      document.getElementById("monthSelect").value = challenge.month;
+      render();
+    });
+    const ctaRow = el("div", "challenge-cta");
+    ctaRow.appendChild(cta);
+    nodes.push(ctaRow);
+  }
+  header.replaceChildren(...nodes);
 }
 
 function buildMonthChips() {

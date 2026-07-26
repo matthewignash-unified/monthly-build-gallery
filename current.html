@@ -72,6 +72,13 @@
   }
   .steps p { margin: 0; font-size: .92rem; }
 
+  .norms { list-style: none; margin: 0; padding: 0; }
+  .norms li {
+    border-left: 3px solid var(--accent-light); padding: 4px 0 4px 12px;
+    margin-bottom: 8px; font-size: .92rem;
+  }
+  .norms strong { color: var(--accent-dark); }
+
   .template { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   .part { border: 1px solid var(--accent-light); border-radius: 10px; padding: 10px 12px; }
   .part h3 { margin: 0 0 2px; font-size: .95rem; color: var(--accent-dark); }
@@ -101,6 +108,15 @@
     <div class="part"><h3>The prompt journey</h3><p>What you asked, what went wrong, and what you changed.</p></div>
     <div class="part"><h3>The code</h3><p>Your repo, openly licensed so other teachers can remix it.</p></div>
   </div>
+
+  <h2 class="section">Community norms</h2>
+  <ul class="norms">
+    <li><strong>Start with a real need.</strong> Every build begins with something genuinely worth fixing in your classroom, not a tool in search of a problem.</li>
+    <li><strong>No student data, ever.</strong> Build, test, and demo with invented names only — nothing about real students goes into a tool or a submission.</li>
+    <li><strong>Share the journey, not just the tool.</strong> The failed prompts and rewrites are what other teachers learn from most, so tell that part honestly.</li>
+    <li><strong>Remix with credit.</strong> Every build is openly licensed. Adapting someone's tool is a compliment — name them when you do.</li>
+    <li><strong>Kind, specific feedback.</strong> Critique the tool, celebrate the builder, and say what would make it work in your room.</li>
+  </ul>
 </div>
 
 <script>

@@ -43,10 +43,7 @@
   .challenge { margin-top: 14px; background: var(--tint); border-radius: 12px; padding: 14px 16px; }
   .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .challenge-head h2 { margin: 0; font-size: 1.15rem; }
-  .pill {
-    font-size: .74rem; background: var(--bg); color: var(--accent-dark);
-    border-radius: 999px; padding: 2px 9px;
-  }
+  .challenge .pill { background: var(--bg); }
   .host { color: var(--muted); font-size: .88rem; margin: 2px 0 8px; }
   .challenge-text { margin: 6px 0; font-size: .92rem; }
   .challenge-videos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
@@ -101,6 +98,12 @@
     <li><span class="week">Final week</span><p>A 60-minute recorded share-out: see what everyone built and hear their prompt journeys.</p></li>
   </ol>
 
+  <div id="monthTerms" hidden>
+    <h2 class="section">Key terms this month</h2>
+    <div id="monthTermsList"></div>
+    <p><a href="glossary.html">See the full glossary →</a></p>
+  </div>
+
   <h2 class="section">Every submission has four parts</h2>
   <div class="template">
     <div class="part"><h3>The need</h3><p>The classroom problem you set out to solve, in plain words.</p></div>
@@ -119,10 +122,12 @@
   </ul>
 </div>
 
+<script src="glossary-lib.js"></script>
 <script>
 // ── Configuration ────────────────────────────────────────────────────────────
 // Published-CSV URL of the challenges sheet. Columns: month, title, host_name,
 // host_context, host_link, need, challenge, video_url, recording_url, status
+// (The glossary URL is shared via glossary-lib.js.)
 const CHALLENGES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1XqCUpIiznTOvbo5JOOVrmhOFL7VdjxxSHtcmqQb3nrrlNpUwnwXJfu89Ugm5ID34CGmiCjzBskZE/pub?gid=0&single=true&output=csv";
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -133,50 +138,9 @@ function track(eventName, params = {}) {
   gtag("event", eventName, params);
 }
 
-function parseCsv(text) {
-  const rows = [[]];
-  let field = "", inQuotes = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQuotes) {
-      if (c !== '"') field += c;
-      else if (text[i + 1] === '"') { field += '"'; i++; }
-      else inQuotes = false;
-    }
-    else if (c === '"') inQuotes = true;
-    else if (c === ",") { rows[rows.length - 1].push(field); field = ""; }
-    else if (c === "\n") { rows[rows.length - 1].push(field); field = ""; rows.push([]); }
-    else if (c !== "\r") field += c;
-  }
-  rows[rows.length - 1].push(field);
-  if (rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === "") rows.pop();
-  return rows;
-}
-
-function rowsToChallenges(rows) {
-  const headers = rows[0].map(h => h.trim().toLowerCase());
-  return rows.slice(1).map(cells =>
-    Object.fromEntries(headers.map((h, i) => [h, (cells[i] || "").trim()]))
-  );
-}
-
-function safeUrl(value) {
-  try {
-    const url = new URL(value);
-    return (url.protocol === "http:" || url.protocol === "https:") ? url.href : null;
-  } catch { return null; }
-}
-
 function youtubeId(url) {
   const m = url.match(/(?:youtube\.com\/(?:watch\?[^#]*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{6,})/);
   return m ? m[1] : null;
-}
-
-function el(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text) node.textContent = text;
-  return node;
 }
 
 function hostLine(ch) {
@@ -260,15 +224,30 @@ function renderChallenge(ch) {
   card.replaceChildren(box);
 }
 
+// The month's key terms come straight from the glossary sheet, so nothing on
+// the site changes URLs month to month. No matching terms → no section.
+function renderMonthTerms(activeMonth) {
+  loadGlossaryTerms().then(terms => {
+    const monthTerms = terms.filter(t =>
+      t.month_introduced.toLowerCase() === activeMonth.toLowerCase());
+    if (!monthTerms.length) return;
+    const list = document.getElementById("monthTermsList");
+    monthTerms.forEach(t => list.appendChild(glossaryEntryNode(t)));
+    document.getElementById("monthTerms").hidden = false;
+    track("glossary_month_view", { month: activeMonth });
+  }).catch(() => {});
+}
+
 fetch(CHALLENGES_URL)
   .then(response => {
     if (!response.ok) throw new Error(`Sheet fetch failed: ${response.status}`);
     return response.text();
   })
   .then(text => {
-    const active = rowsToChallenges(parseCsv(text))
-      .find(c => c.status.trim().toLowerCase() === "active");
+    const active = rowsToObjects(parseCsv(text))
+      .find(c => (c.status || "").trim().toLowerCase() === "active");
     renderChallenge(active || null);
+    if (active) renderMonthTerms(active.month);
   })
   .catch(() => {
     const card = document.getElementById("card");
@@ -276,6 +255,10 @@ fetch(CHALLENGES_URL)
     soon.appendChild(el("p", "", "Couldn't load the challenge right now. Please refresh to try again."));
     card.replaceChildren(soon);
   });
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") document.querySelectorAll("dialog[open]").forEach(d => d.close());
+});
 </script>
 </body>
 </html>

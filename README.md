@@ -48,9 +48,21 @@ please refresh" message.
   a new submission in the Sheet shows up on the next page load — the page reads
   the published Sheet directly. (Google's publish cache can take a few minutes
   to refresh.)
-- **Code updates deploy via push.** Any change to `index.html` or
-  `glossary.html` goes live automatically when pushed to `main`, via GitHub
-  Pages.
+- **Code updates deploy via push.** Any change to the HTML or JS files goes
+  live automatically when pushed to `main`, via GitHub Pages.
+
+## Monthly turnover — no page or embed edits, ever
+
+When a new month starts, everything happens in the sheets:
+
+1. **Challenges sheet**: set the finished month's `status` to `complete` and
+   the new month's row to `active`. The archive banner, month chips, and
+   `current.html` all follow automatically.
+2. **Glossary sheet**: tag the new month's terms in `month_introduced`.
+   They appear in `current.html`'s "Key terms this month" section (and in
+   `?month=` deep links) on the next page load.
+
+No HTML changes, no embed URL changes on the Google Site.
 
 ## Local preview
 
@@ -107,13 +119,15 @@ term, definition, example, category, month_introduced, image_url, demo_id
 - `demo_id` is optional: when it names an entry in the demo registry, a live
   interactive demo renders with a "View the code" toggle showing a clean,
   copyable teaching snippet.
-- **Monthly embed**: `glossary.html?month=September%202026` shows only that
-  month's terms (all expanded) under a "Key terms for …" heading — embed this
-  filtered URL on each month's challenge page.
+- The shared data-source URL, demo registry, and entry rendering live in
+  `glossary-lib.js`, used by both `glossary.html` and `current.html`.
+- `glossary.html?month=September%202026` still works for deep links and the
+  archive, but nothing on the site depends on it monthly — `current.html`
+  shows the active month's key terms automatically.
 
 ### Adding a new demo
 
-In `glossary.html`, add one entry to the `DEMOS` registry:
+In `glossary-lib.js`, add one entry to the `DEMOS` registry:
 
 ```js
 "my-demo": {

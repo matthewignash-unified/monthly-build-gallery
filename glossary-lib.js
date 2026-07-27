@@ -9,7 +9,7 @@ const GLOSSARY_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIN
 // Get pre-filled link, type {term} into the term question, copy the link,
 // and paste it here (it keeps {term} where the answer goes). While empty,
 // every "Suggest a term" link stays hidden.
-const SUGGEST_TERM_URL = "";
+const SUGGEST_TERM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdDl-awzywkMrxBzsE08UjVoi5HOeJooQjCogtulPsZ7Uwqug/viewform?usp=pp_url&entry.1301417021={term}";
 
 // ── Demo registry ────────────────────────────────────────────────────────────
 // To add a demo: add one entry here with build(stage) — which appends the

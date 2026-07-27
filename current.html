@@ -44,7 +44,9 @@
   .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .challenge-head h2 { margin: 0; font-size: 1.15rem; }
   .challenge .pill { background: var(--bg); }
-  .host { color: var(--muted); font-size: .88rem; margin: 2px 0 8px; }
+  .host { color: var(--muted); font-size: .88rem; margin: 2px 0 4px; }
+  .host-bio { color: var(--muted); font-size: .84rem; margin: 0 0 8px; }
+  #monthTerms .suggest-term { margin-left: 14px; }
   .challenge-text { margin: 6px 0; font-size: .92rem; }
   .challenge-videos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .video-box { aspect-ratio: 16 / 9; flex: 1 1 280px; max-width: 480px; }
@@ -108,7 +110,7 @@
   <div id="monthTerms" hidden>
     <h2 class="section">Key terms this month</h2>
     <div id="monthTermsList"></div>
-    <p><a href="glossary.html">See the full glossary →</a></p>
+    <p id="monthTermsFoot"><a href="glossary.html">See the full glossary →</a></p>
   </div>
 
   <h2 class="section">Every submission has four parts</h2>
@@ -220,6 +222,7 @@ function renderChallenge(ch) {
   box.appendChild(head);
   const host = hostLine(ch);
   if (host) box.appendChild(host);
+  if (ch.host_bio) box.appendChild(el("p", "host-bio", ch.host_bio));
   if (ch.need) box.appendChild(labeledText("The need", ch.need));
   if (ch.challenge) box.appendChild(labeledText("The challenge", ch.challenge));
   const videos = el("div", "challenge-videos");
@@ -240,6 +243,8 @@ function renderMonthTerms(activeMonth) {
     if (!monthTerms.length) return;
     const list = document.getElementById("monthTermsList");
     monthTerms.forEach(t => list.appendChild(glossaryEntryNode(t)));
+    const suggest = suggestTermLink("", "Suggest a term →");
+    if (suggest) document.getElementById("monthTermsFoot").appendChild(suggest);
     document.getElementById("monthTerms").hidden = false;
     track("glossary_month_view", { month: activeMonth });
   }).catch(() => {});

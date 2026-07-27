@@ -79,9 +79,12 @@ A third published Google Sheet (URL in the `CHALLENGES_URL` constant in both
 `index.html` and `current.html`) describes each month's challenge. Columns:
 
 ```
-month, title, host_name, host_context, host_link, need, challenge,
-video_url, recording_url, status
+month, title, host_name, host_context, host_link, host_bio, need,
+challenge, video_url, recording_url, status
 ```
+
+`host_bio` is optional small-print text under the host line on both the
+archive's challenge header and `current.html`.
 
 `status` is `upcoming`, `active`, or `complete`. It powers:
 
@@ -121,6 +124,13 @@ term, definition, example, category, month_introduced, image_url, demo_id
   copyable teaching snippet.
 - The shared data-source URL, demo registry, and entry rendering live in
   `glossary-lib.js`, used by both `glossary.html` and `current.html`.
+- **Suggest a term**: paste a pre-filled Google Form link into
+  `SUGGEST_TERM_URL` in `glossary-lib.js` (in the Form: Send → Get
+  pre-filled link, type `{term}` as the term answer, copy the link).
+  "Suggest a term" links then appear under the glossary list, in the
+  no-results state (pre-filled with the search text), and in
+  `current.html`'s key-terms section. While the constant is empty the
+  links stay hidden.
 - `glossary.html?month=September%202026` still works for deep links and the
   archive, but nothing on the site depends on it monthly — `current.html`
   shows the active month's key terms automatically.

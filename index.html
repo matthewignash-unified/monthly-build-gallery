@@ -157,7 +157,8 @@
   .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .challenge-head h2 { margin: 0; font-size: 1.15rem; }
   .challenge-head .pill { background: var(--card); }
-  .challenge .host { color: var(--muted); font-size: .88rem; margin: 2px 0 8px; }
+  .challenge .host { color: var(--muted); font-size: .88rem; margin: 2px 0 4px; }
+  .challenge .host-bio { color: var(--muted); font-size: .84rem; margin: 0 0 8px; }
   .challenge-text { margin: 6px 0; font-size: .92rem; }
   .challenge-videos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .video-box { aspect-ratio: 16 / 9; flex: 1 1 280px; max-width: 480px; }
@@ -641,6 +642,7 @@ function challengeContent(ch) {
   nodes.push(head);
   const host = hostLine(ch);
   if (host) nodes.push(host);
+  if (ch.host_bio) nodes.push(el("p", "host-bio", ch.host_bio));
   if (ch.need) nodes.push(labeledText("The need", ch.need));
   if (ch.challenge) nodes.push(labeledText("The challenge", ch.challenge));
   const videos = el("div", "challenge-videos");
@@ -786,8 +788,8 @@ async function loadChallenges() {
     if (!response.ok) return [];
     return rowsToSubmissions(parseCsv(await response.text()))
       .map(raw => Object.fromEntries(
-        ["month", "title", "host_name", "host_context", "host_link", "need",
-         "challenge", "video_url", "recording_url", "status"]
+        ["month", "title", "host_name", "host_context", "host_link", "host_bio",
+         "need", "challenge", "video_url", "recording_url", "status"]
           .map(key => [key, String(raw[key] || "").trim()])))
       .filter(c => c.month);
   } catch { return []; }

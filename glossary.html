@@ -132,8 +132,16 @@ function applyFilter() {
   const empty = document.getElementById("emptyState");
   empty.hidden = visible > 0;
   if (!visible) {
-    empty.replaceChildren(el("div", "big", "🔎"),
-      el("p", "", "No terms match your search. Try a different word or clear the category."));
+    const parts = [el("div", "big", "🔎"),
+      el("p", "", "No terms match your search. Try a different word or clear the category.")];
+    const suggest = state.query &&
+      suggestTermLink(state.query, `Can't find it? Suggest "${state.query}"`);
+    if (suggest) {
+      const line = el("p");
+      line.appendChild(suggest);
+      parts.push(line);
+    }
+    empty.replaceChildren(...parts);
   }
 }
 
@@ -192,6 +200,12 @@ loadGlossaryTerms().then(terms => {
   });
   buildChips(terms);
   applyFilter();
+  const suggest = suggestTermLink("", "Suggest a term →");
+  if (suggest) {
+    const line = el("p");
+    line.appendChild(suggest);
+    document.getElementById("emptyState").after(line);
+  }
 }).catch(() => {
   const empty = document.getElementById("emptyState");
   empty.hidden = false;

@@ -5,6 +5,12 @@
 // term, definition, example, category, month_introduced, image_url, demo_id
 const GLOSSARY_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQINulIfxYQ5CB5MGjReIED8hexMv63S7GS2EYd1IsNa2LHxaEOYpZWIatZJ_rQQtNPakH5HQt7BC8V/pub?gid=932020898&single=true&output=csv";
 
+// Pre-filled "Suggest a term" Google Form link. In the Form: Send → <> →
+// Get pre-filled link, type {term} into the term question, copy the link,
+// and paste it here (it keeps {term} where the answer goes). While empty,
+// every "Suggest a term" link stays hidden.
+const SUGGEST_TERM_URL = "";
+
 // ── Demo registry ────────────────────────────────────────────────────────────
 // To add a demo: add one entry here with build(stage) — which appends the
 // live demo's DOM to `stage` — and `code`, the clean teachable snippet shown
@@ -226,6 +232,16 @@ function el(tag, className, text) {
   return node;
 }
 
+function suggestTermLink(term, label) {
+  if (!SUGGEST_TERM_URL) return null;
+  const link = el("a", "suggest-term", label);
+  link.href = SUGGEST_TERM_URL.replace("{term}", encodeURIComponent(term));
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.addEventListener("click", () => track("term_suggested_click"));
+  return link;
+}
+
 // ── Entry rendering ──────────────────────────────────────────────────────────
 function demoNode(id, demo) {
   const box = el("div", "demo");
@@ -312,6 +328,7 @@ document.head.appendChild(Object.assign(document.createElement("style"), { textC
   }
   .term-image { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; }
   .btn-small { font-size: .78rem; padding: 4px 10px; }
+  .suggest-term { font-size: .88rem; }
 
   .demo { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
   .demo-stage { padding: 12px 14px 14px; }

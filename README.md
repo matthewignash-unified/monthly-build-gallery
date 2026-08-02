@@ -172,7 +172,8 @@ https://matthewignash-unified.github.io/monthly-build-gallery/
 
 The page is compact, self-scrolling, and responsive from 320px up, so it works
 inside an iframe at whatever size the Site gives it. The other pages embed the
-same way: `…/glossary.html`, `…/current.html`, and `…/hosts.html` (the "Host a
+same way: `…/glossary.html`, `…/current.html`, `…/suggestions.html` (the
+static "Getting started" page), and `…/hosts.html` (the "Host a
 month" page — hosting pitch, worked brief example, an interest-form CTA, and a
 calendar of confirmed months from the challenges sheet; completed months link
 to the archive filtered via `index.html?month=…`). When framed, pages hide

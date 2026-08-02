@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Monthly Build: Getting Started</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FBDQ9MZHMB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FBDQ9MZHMB');
+</script>
+<style>
+  :root {
+    /* AI Coding for Educators palette */
+    --accent: #2E7D5B;        /* brand green — safe under white text (5.0:1) */
+    --accent-dark: color-mix(in srgb, var(--accent) 80%, black);
+    --accent-light: #57BB8A;  /* decorative only — never put white text on it */
+    --tint: #EEF7F2;          /* soft section tint — dark text only */
+    --bg: #ffffff;
+    --ink: #212121;
+    --muted: #595959;
+    --line: #e0e0e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 40px; }
+  a { color: var(--accent); }
+  a:hover { color: var(--accent-dark); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
+  header h1 { font-size: 1.35rem; margin: 0; }
+  .header-links { float: right; display: flex; gap: 12px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .site-nav { display: flex; gap: 12px; }
+  .site-nav[hidden] { display: none; }
+
+  .intro { margin: 14px 0 0; }
+
+  h2.section {
+    font-size: 1.05rem; margin: 28px 0 14px; padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  h2.section::after {
+    content: ""; display: block; width: 44px; height: 3px;
+    background: var(--accent); border-radius: 2px; margin-top: 5px;
+  }
+  .section-body { margin: 0; font-size: .95rem; }
+
+  .pointers { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .pointer {
+    display: block; border: 1px solid var(--accent-light); border-radius: 10px;
+    padding: 12px 14px; text-decoration: none;
+  }
+  .pointer:hover { background: var(--tint); }
+  .pointer h3 { margin: 0 0 2px; font-size: .95rem; color: var(--accent-dark); }
+  .pointer p { margin: 0; font-size: .88rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="header-links">
+      <span id="siteNav" class="site-nav">
+        <a href="index.html">Archive</a>
+        <a href="glossary.html">Glossary</a>
+        <a href="current.html">This month</a>
+        <a href="hosts.html">Hosts</a>
+      </span>
+      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full page ↗</a>
+    </span>
+    <h1>Getting started</h1>
+  </header>
+
+  <p class="intro">You do not need to be a programmer to build something useful. Most tools in the archive started as a conversation with an AI assistant and a real classroom itch.</p>
+
+  <h2 class="section">Where to build</h2>
+  <p class="section-body">Claude, ChatGPT, Gemini, or any assistant you already use. Describe the need, ask for a single-file tool, and iterate. The conversation is the workshop: what came out wrong on the first try becomes your next request, and that back-and-forth is the prompt journey you will share.</p>
+
+  <h2 class="section">Where to host, free</h2>
+  <p class="section-body">GitHub Pages, Vercel, Netlify, Google Apps Script. Each gives a single HTML file a real address for free, so a colleague can open your tool from any browser. Your builds stay yours, hosted wherever you put them.</p>
+
+  <h2 class="section">How to start small</h2>
+  <p class="section-body">Pick something that annoys you weekly and would save five minutes. A name picker, a timer, a comment starter, a sign-out sheet. Small and real beats ambitious and abandoned — you can always grow a tool that already works.</p>
+
+  <h2 class="section">Where to go next</h2>
+  <div class="pointers">
+    <a class="pointer" href="glossary.html">
+      <h3>Glossary</h3>
+      <p>Learn the words.</p>
+    </a>
+    <a class="pointer" href="index.html">
+      <h3>Archive</h3>
+      <p>See what teachers have built.</p>
+    </a>
+    <a class="pointer" href="current.html">
+      <h3>This month's challenge</h3>
+      <p>Build along this month.</p>
+    </a>
+  </div>
+</div>
+
+<script>
+// Embedded in the Google Site: its tabs provide navigation, so swap the nav
+// for an escape hatch to the standalone page.
+if (window.self !== window.top) {
+  document.getElementById("siteNav").hidden = true;
+  const openFull = document.getElementById("openFull");
+  openFull.href = window.location.href;
+  openFull.hidden = false;
+}
+</script>
+</body>
+</html>

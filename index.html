@@ -42,8 +42,9 @@
   header h1 { font-size: 1.35rem; margin: 0; }
   header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
 
-  .header-links { float: right; font-size: .85rem; margin: 3px 0 0 12px; }
-  .header-links[hidden] { display: none; }
+  .header-links { float: right; display: flex; gap: 12px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .site-nav { display: flex; gap: 12px; }
+  .site-nav[hidden] { display: none; }
   .tabs { display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line); }
   .tab {
     font: inherit; font-weight: 600; cursor: pointer; padding: 8px 14px;
@@ -194,7 +195,14 @@
 <body>
 <div class="wrap">
   <header>
-    <a id="openFull" class="header-links" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
+    <span class="header-links">
+      <span id="siteNav" class="site-nav">
+        <a href="glossary.html">Glossary</a>
+        <a href="current.html">This month</a>
+        <a href="hosts.html">Hosts</a>
+      </span>
+      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full archive ↗</a>
+    </span>
     <h1>The Monthly Build: Submission Archive</h1>
     <p>Tools built by educators, for educators — one small build at a time.</p>
   </header>
@@ -459,8 +467,10 @@ for (const tabId of Object.keys(TAB_PANELS)) {
   document.getElementById(tabId).addEventListener("click", () => selectTab(tabId));
 }
 
-// Embedded in the Google Site: offer an escape hatch to the standalone page.
+// Embedded in the Google Site: its tabs provide navigation, so swap the nav
+// for an escape hatch to the standalone page.
 if (window.self !== window.top) {
+  document.getElementById("siteNav").hidden = true;
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;
@@ -802,6 +812,11 @@ Promise.all([loadSubmissions(), loadChallenges()])
     renderFeatured(approved);
     buildMonthChips();
     buildFilterBar();
+    const monthParam = new URLSearchParams(location.search).get("month");
+    if (monthParam) {
+      state.month = monthParam;
+      document.getElementById("monthSelect").value = monthParam;
+    }
     render();
   })
   .catch(() => {

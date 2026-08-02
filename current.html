@@ -39,6 +39,9 @@
 
   header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
   header h1 { font-size: 1.35rem; margin: 0; }
+  .header-links { float: right; display: flex; gap: 12px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .site-nav { display: flex; gap: 12px; }
+  .site-nav[hidden] { display: none; }
 
   .challenge { margin-top: 14px; background: var(--tint); border-radius: 12px; padding: 14px 16px; }
   .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -94,6 +97,13 @@
 <body>
 <div class="wrap">
   <header>
+    <span class="header-links">
+      <span id="siteNav" class="site-nav">
+        <a href="index.html">Archive</a>
+        <a href="glossary.html">Glossary</a>
+        <a href="hosts.html">Hosts</a>
+      </span>
+    </span>
     <h1>The Monthly Build: This Month's Challenge</h1>
   </header>
 
@@ -271,6 +281,11 @@ fetch(CHALLENGES_URL)
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") document.querySelectorAll("dialog[open]").forEach(d => d.close());
 });
+
+// Embedded in the Google Site: its tabs provide the navigation.
+if (window.self !== window.top) {
+  document.getElementById("siteNav").hidden = true;
+}
 </script>
 </body>
 </html>

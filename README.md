@@ -158,9 +158,12 @@ https://matthewignash-unified.github.io/monthly-build-gallery/
 ```
 
 The page is compact, self-scrolling, and responsive from 320px up, so it works
-inside an iframe at whatever size the Site gives it. The glossary embeds the
-same way at `…/glossary.html` (optionally with `?month=`), and both pages show
-an "Open the full …" link automatically when framed.
+inside an iframe at whatever size the Site gives it. The other pages embed the
+same way: `…/glossary.html`, `…/current.html`, and `…/hosts.html` (the "Host a
+month" page — hosting pitch, worked brief example, an interest-form CTA, and a
+calendar of confirmed months from the challenges sheet; completed months link
+to the archive filtered via `index.html?month=…`). When framed, pages hide
+their compact standalone nav and show an "Open the full …" link instead.
 
 ## Analytics
 
@@ -168,8 +171,10 @@ Both pages load GA4 (`G-FBDQ9MZHMB`). Custom events — never with personal data
 archive: `open_tool`, `open_code`, `open_journey` (tool_name), `filter_used`
 (filter_type), `featured_loaded` (tool_name), `open_full_archive`; glossary:
 `glossary_search`, `glossary_category` (category), `glossary_month_view`
-(month), `demo_used` (demo_id), `code_copied` (demo_id); challenges (archive
-and current.html): `challenge_video` and `challenge_recording` (month).
+(month), `demo_used` (demo_id), `code_copied` (demo_id),
+`term_suggested_click`; challenges (archive and current.html):
+`challenge_video` and `challenge_recording` (month); hosts.html:
+`host_interest_click`.
 
 ## License
 

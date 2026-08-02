@@ -41,8 +41,9 @@
   header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
   header h1 { font-size: 1.35rem; margin: 0; }
   header p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
-  .header-links { float: right; font-size: .85rem; margin: 3px 0 0 12px; }
-  .header-links[hidden] { display: none; }
+  .header-links { float: right; display: flex; gap: 12px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .site-nav { display: flex; gap: 12px; }
+  .site-nav[hidden] { display: none; }
 
   .month-view {
     margin-top: 14px; padding: 10px 14px; background: var(--tint); border-radius: 10px;
@@ -79,7 +80,14 @@
 <body>
 <div class="wrap">
   <header>
-    <a id="openFull" class="header-links" target="_blank" rel="noopener" hidden>Open the full glossary ↗</a>
+    <span class="header-links">
+      <span id="siteNav" class="site-nav">
+        <a href="index.html">Archive</a>
+        <a href="current.html">This month</a>
+        <a href="hosts.html">Hosts</a>
+      </span>
+      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full glossary ↗</a>
+    </span>
     <h1>The Monthly Build: Glossary</h1>
     <p>Plain-language terms for building classroom tools with AI. New terms are added with each month's challenge.</p>
   </header>
@@ -217,8 +225,10 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") document.querySelectorAll("dialog[open]").forEach(d => d.close());
 });
 
-// Embedded in the Google Site: offer an escape hatch to the standalone page.
+// Embedded in the Google Site: its tabs provide navigation, so swap the nav
+// for an escape hatch to the standalone page.
 if (window.self !== window.top) {
+  document.getElementById("siteNav").hidden = true;
   const openFull = document.getElementById("openFull");
   openFull.href = window.location.href;
   openFull.hidden = false;

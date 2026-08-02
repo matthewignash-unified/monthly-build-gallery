@@ -105,15 +105,16 @@ without the challenge layer.
 
 ### Month Q&A
 
-The challenges spreadsheet's Q&A tab (`month, question, answer` — URL in the
-`QA_SHEET_URL` constant in `index.html` and `current.html`) powers a compact
-"Questions and answers" accordion under the month's challenge header in the
-archive and under the challenge card on `current.html`. Only rows with both a
-question and an answer render; a month with no answered rows shows no section
-(current.html keeps its "Ask the host a question" link either way). While
-`QA_SHEET_URL` is empty, a small sample Q&A shows with a "Sample data" badge.
-Builders ask questions through the linked Google Form; answers are pasted
-into the Q&A tab.
+The challenges spreadsheet's Q&A tab (`Month, Name, Question, Answer,
+Published` — URL in the `QA_SHEET_URL` constant in `index.html` and
+`current.html`) powers a compact "Questions and answers" accordion under the
+month's challenge header in the archive and under the challenge card on
+`current.html`. Only rows where `Published` is `yes` **and** the answer is
+filled in render; a month with no published rows shows no section
+(current.html keeps its "Ask the host a question" link either way).
+**Privacy**: only the first name from the `Name` column is ever displayed
+("Asked by Dana"). Builders ask questions through the linked Google Form;
+publishing an answer means filling `Answer` and setting `Published` to `yes`.
 
 ## The glossary page
 

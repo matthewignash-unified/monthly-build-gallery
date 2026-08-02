@@ -155,6 +155,18 @@
     letter-spacing: .05em; text-transform: uppercase; border-radius: 999px;
   }
   .challenge-cta { margin-top: 12px; }
+  .qa-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 14px 0 8px; }
+  .qa-head h3 { margin: 0; font-size: .95rem; }
+  .qa-head a { font-size: .85rem; }
+  .qa-item { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; }
+  .qa-item summary { padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: .9rem; }
+  .qa-item summary::marker { color: var(--accent); }
+  .qa-item p { margin: 0; padding: 0 12px 10px; font-size: .9rem; }
+  .badge-sample {
+    padding: 1px 8px; font-size: .68rem; font-weight: 600; letter-spacing: .03em;
+    text-transform: uppercase; color: var(--muted);
+    border: 1px dashed #9e9e9e; border-radius: 999px;
+  }
   .challenge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .challenge-head h2 { margin: 0; font-size: 1.15rem; }
   .challenge-head .pill { background: var(--card); }
@@ -260,6 +272,10 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRs7KsyG7UWOQ
 // Published-CSV URL of the challenges sheet. Columns: month, title, host_name,
 // host_context, host_link, need, challenge, video_url, recording_url, status
 const CHALLENGES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1XqCUpIiznTOvbo5JOOVrmhOFL7VdjxxSHtcmqQb3nrrlNpUwnwXJfu89Ugm5ID34CGmiCjzBskZE/pub?gid=0&single=true&output=csv";
+// Published-CSV URL of the challenges spreadsheet's Q&A tab (month, question,
+// answer). While empty, a small sample Q&A shows with a "Sample data" badge.
+const QA_SHEET_URL = "";
+const ASK_HOST_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdqFykIwD6Bw-foOtWYx_hqRIch9_nofRmp4iF8YWtEwjTY_w/viewform";
 // ─────────────────────────────────────────────────────────────────────────────
 
 const EMBED_TIMEOUT_MS = 8000;
@@ -595,6 +611,64 @@ function setBuilder(name) {
 // ── Challenge layer ──────────────────────────────────────────────────────────
 let challenges = [];
 
+// ── Month Q&A ────────────────────────────────────────────────────────────────
+const SAMPLE_QA = [
+  { month: "August 2026", question: "Does the picker need to avoid repeating names?", answer: "Host's call — the August brief leaves it to you. The sample build removes picked names until the whole list has had a turn." },
+  { month: "August 2026", question: "Can I build it with Scratch instead of an AI assistant?", answer: "Any approach that ends in something a teacher can open in a browser is welcome — the prompt journey just becomes your build journey." },
+  { month: "August 2026", question: "Pending question (should never render)", answer: "" }
+];
+
+let qaRows = [];
+let qaIsSample = false;
+
+async function loadQa() {
+  if (!QA_SHEET_URL) {
+    qaIsSample = true;
+    return SAMPLE_QA;
+  }
+  try {
+    const response = await fetch(QA_SHEET_URL);
+    if (!response.ok) return [];
+    return rowsToSubmissions(parseCsv(await response.text()));
+  } catch { return []; }
+}
+
+function answeredQa(month) {
+  return qaRows.filter(r =>
+    (r.month || "").trim().toLowerCase() === month.toLowerCase() &&
+    (r.question || "").trim() && (r.answer || "").trim());
+}
+
+function askHostLink() {
+  const link = el("a", "", "Ask the host a question ↗");
+  link.href = ASK_HOST_URL;
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.addEventListener("click", () => track("ask_host_click"));
+  return link;
+}
+
+function qaItem(row, month) {
+  const item = el("details", "qa-item");
+  item.appendChild(el("summary", "", row.question.trim()));
+  item.appendChild(el("p", "", row.answer.trim()));
+  item.addEventListener("toggle", () => { if (item.open) track("qa_opened", { month }); });
+  return item;
+}
+
+function qaSection(month) {
+  const rows = answeredQa(month);
+  if (!rows.length) return null;
+  const box = el("div", "qa");
+  const head = el("div", "qa-head");
+  head.appendChild(el("h3", "", "Questions and answers"));
+  if (qaIsSample) head.appendChild(el("span", "badge-sample", "Sample data"));
+  head.appendChild(askHostLink());
+  box.appendChild(head);
+  rows.forEach(r => box.appendChild(qaItem(r, month)));
+  return box;
+}
+
 function hostLine(ch) {
   if (!ch.host_name) return null;
   const line = el("div", "host");
@@ -680,7 +754,10 @@ function renderChallengeLayer() {
   header.hidden = !challenge;
   if (!challenge) return header.replaceChildren();
   const nodes = challengeContent(challenge);
-  if (!state.month) {
+  if (state.month) {
+    const qa = qaSection(challenge.month);
+    if (qa) nodes.push(qa);
+  } else {
     nodes.unshift(el("span", "now-tag", "Now running"));
     const cta = el("button", "btn", `See the ${challenge.month} builds →`);
     cta.addEventListener("click", () => {
@@ -805,9 +882,10 @@ async function loadChallenges() {
   } catch { return []; }
 }
 
-Promise.all([loadSubmissions(), loadChallenges()])
-  .then(([rows, challengeRows]) => {
+Promise.all([loadSubmissions(), loadChallenges(), loadQa()])
+  .then(([rows, challengeRows, qa]) => {
     challenges = challengeRows;
+    qaRows = qa;
     approved = rows.map(normalize).filter(s => isYes(s.approved));
     renderFeatured(approved);
     buildMonthChips();

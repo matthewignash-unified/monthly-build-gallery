@@ -103,6 +103,18 @@ archive's challenge header and `current.html`.
 If the challenges sheet can't be fetched, the archive renders normally
 without the challenge layer.
 
+### Month Q&A
+
+The challenges spreadsheet's Q&A tab (`month, question, answer` — URL in the
+`QA_SHEET_URL` constant in `index.html` and `current.html`) powers a compact
+"Questions and answers" accordion under the month's challenge header in the
+archive and under the challenge card on `current.html`. Only rows with both a
+question and an answer render; a month with no answered rows shows no section
+(current.html keeps its "Ask the host a question" link either way). While
+`QA_SHEET_URL` is empty, a small sample Q&A shows with a "Sample data" badge.
+Builders ask questions through the linked Google Form; answers are pasted
+into the Q&A tab.
+
 ## The glossary page
 
 `glossary.html` is a searchable glossary of vibe-coding terms for educators,
@@ -173,8 +185,8 @@ archive: `open_tool`, `open_code`, `open_journey` (tool_name), `filter_used`
 `glossary_search`, `glossary_category` (category), `glossary_month_view`
 (month), `demo_used` (demo_id), `code_copied` (demo_id),
 `term_suggested_click`; challenges (archive and current.html):
-`challenge_video` and `challenge_recording` (month); hosts.html:
-`host_interest_click`.
+`challenge_video` and `challenge_recording` (month), `ask_host_click`,
+`qa_opened` (month); hosts.html: `host_interest_click`.
 
 ## License
 

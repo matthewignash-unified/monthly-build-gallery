@@ -50,6 +50,19 @@
   .host { color: var(--muted); font-size: .88rem; margin: 2px 0 4px; }
   .host-bio { color: var(--muted); font-size: .84rem; margin: 0 0 8px; }
   #monthTerms .suggest-term { margin-left: 14px; }
+  .qa-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; }
+  .qa-head h3 { margin: 0; font-size: .95rem; }
+  .qa-head a, .qa-ask-line a { font-size: .85rem; }
+  .qa-ask-line { margin: 12px 0 0; }
+  .qa-item { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; }
+  .qa-item summary { padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: .9rem; }
+  .qa-item summary::marker { color: var(--accent); }
+  .qa-item p { margin: 0; padding: 0 12px 10px; font-size: .9rem; }
+  .badge-sample {
+    padding: 1px 8px; font-size: .68rem; font-weight: 600; letter-spacing: .03em;
+    text-transform: uppercase; color: var(--muted);
+    border: 1px dashed #9e9e9e; border-radius: 999px;
+  }
   .challenge-text { margin: 6px 0; font-size: .92rem; }
   .challenge-videos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .video-box { aspect-ratio: 16 / 9; flex: 1 1 280px; max-width: 480px; }
@@ -108,6 +121,7 @@
   </header>
 
   <div id="card"></div>
+  <div id="qaBlock"></div>
 
   <h2 class="section">How a month runs</h2>
   <ol class="steps">
@@ -148,6 +162,10 @@
 // host_context, host_link, need, challenge, video_url, recording_url, status
 // (The glossary URL is shared via glossary-lib.js.)
 const CHALLENGES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1XqCUpIiznTOvbo5JOOVrmhOFL7VdjxxSHtcmqQb3nrrlNpUwnwXJfu89Ugm5ID34CGmiCjzBskZE/pub?gid=0&single=true&output=csv";
+// Published-CSV URL of the challenges spreadsheet's Q&A tab (month, question,
+// answer). While empty, a small sample Q&A shows with a "Sample data" badge.
+const QA_SHEET_URL = "";
+const ASK_HOST_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdqFykIwD6Bw-foOtWYx_hqRIch9_nofRmp4iF8YWtEwjTY_w/viewform";
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ANALYTICS_DEBUG = false;
@@ -244,6 +262,77 @@ function renderChallenge(ch) {
   card.replaceChildren(box);
 }
 
+// ── Month Q&A ────────────────────────────────────────────────────────────────
+const SAMPLE_QA = [
+  { month: "August 2026", question: "Does the picker need to avoid repeating names?", answer: "Host's call — the August brief leaves it to you. The sample build removes picked names until the whole list has had a turn." },
+  { month: "August 2026", question: "Can I build it with Scratch instead of an AI assistant?", answer: "Any approach that ends in something a teacher can open in a browser is welcome — the prompt journey just becomes your build journey." },
+  { month: "August 2026", question: "Pending question (should never render)", answer: "" }
+];
+
+let qaRows = [];
+let qaIsSample = false;
+
+async function loadQa() {
+  if (!QA_SHEET_URL) {
+    qaIsSample = true;
+    return SAMPLE_QA;
+  }
+  try {
+    const response = await fetch(QA_SHEET_URL);
+    if (!response.ok) return [];
+    return rowsToObjects(parseCsv(await response.text()));
+  } catch { return []; }
+}
+
+function answeredQa(month) {
+  return qaRows.filter(r =>
+    (r.month || "").trim().toLowerCase() === month.toLowerCase() &&
+    (r.question || "").trim() && (r.answer || "").trim());
+}
+
+function askHostLink() {
+  const link = el("a", "", "Ask the host a question ↗");
+  link.href = ASK_HOST_URL;
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.addEventListener("click", () => track("ask_host_click"));
+  return link;
+}
+
+function qaItem(row, month) {
+  const item = el("details", "qa-item");
+  item.appendChild(el("summary", "", row.question.trim()));
+  item.appendChild(el("p", "", row.answer.trim()));
+  item.addEventListener("toggle", () => { if (item.open) track("qa_opened", { month }); });
+  return item;
+}
+
+function qaSection(month) {
+  const rows = answeredQa(month);
+  if (!rows.length) return null;
+  const box = el("div", "qa");
+  const head = el("div", "qa-head");
+  head.appendChild(el("h3", "", "Questions and answers"));
+  if (qaIsSample) head.appendChild(el("span", "badge-sample", "Sample data"));
+  head.appendChild(askHostLink());
+  box.appendChild(head);
+  rows.forEach(r => box.appendChild(qaItem(r, month)));
+  return box;
+}
+
+// The ask-the-host link stays visible even before any answers exist.
+function renderQa(month) {
+  loadQa().then(rows => {
+    qaRows = rows;
+    const block = document.getElementById("qaBlock");
+    const section = qaSection(month);
+    if (section) return block.replaceChildren(section);
+    const line = el("p", "qa-ask-line");
+    line.appendChild(askHostLink());
+    block.replaceChildren(line);
+  });
+}
+
 // The month's key terms come straight from the glossary sheet, so nothing on
 // the site changes URLs month to month. No matching terms → no section.
 function renderMonthTerms(activeMonth) {
@@ -269,7 +358,10 @@ fetch(CHALLENGES_URL)
     const active = rowsToObjects(parseCsv(text))
       .find(c => (c.status || "").trim().toLowerCase() === "active");
     renderChallenge(active || null);
-    if (active) renderMonthTerms(active.month);
+    if (active) {
+      renderQa(active.month);
+      renderMonthTerms(active.month);
+    }
   })
   .catch(() => {
     const card = document.getElementById("card");

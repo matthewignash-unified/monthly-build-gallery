@@ -162,6 +162,22 @@ In `glossary-lib.js`, add one entry to the `DEMOS` registry:
 Then put `my-demo` in the sheet's `demo_id` column for the matching term.
 (Inside `code`, write any closing script tag as `<\/script>`.)
 
+## The demos folder
+
+`demos/` holds worked examples linked from `start-here.html` — complete little
+tools a reader can open and poke at, not page components. (Not to be confused
+with the glossary's demo registry in `glossary-lib.js` above, which renders the
+inline pattern demos inside glossary entries.)
+
+`demos/timer-v1.html` is the unedited first draft from a twenty-minute
+conversation with an AI assistant, and it **keeps its bug on purpose**: pressing
+Start twice stacks a second interval and the clock runs at double speed. That
+bug is the teaching point of the Start Here page — round two of the prompt
+journey is fixing it. Do not lint, reformat, or repair it.
+`demos/timer-v2.html` is the same timer three rounds later.
+
+Future worked examples belong in `demos/`, not the repo root.
+
 ## Embedding in the Google Site
 
 Insert → Embed → By URL:
@@ -172,23 +188,29 @@ https://matthewignash-unified.github.io/monthly-build-gallery/
 
 The page is compact, self-scrolling, and responsive from 320px up, so it works
 inside an iframe at whatever size the Site gives it. The other pages embed the
-same way: `…/glossary.html`, `…/current.html`, `…/suggestions.html` (the
-static "Getting started" page), and `…/hosts.html` (the "Host a
-month" page — hosting pitch, worked brief example, an interest-form CTA, and a
+same way: `…/glossary.html`, `…/current.html`, `…/start-here.html` (the Start
+Here on-ramp — a complete first build with copy-able prompts and two worked
+demos; it replaces `suggestions.html` once the Site's embed URL is switched
+over, so keep `suggestions.html` in place until then), and `…/hosts.html`
+(the "Host a month" page — hosting pitch, worked brief example, an interest-form CTA, and a
 calendar of confirmed months from the challenges sheet; completed months link
 to the archive filtered via `index.html?month=…`). When framed, pages hide
 their compact standalone nav and show an "Open the full …" link instead.
 
 ## Analytics
 
-Both pages load GA4 (`G-FBDQ9MZHMB`). Custom events — never with personal data:
+Every page loads GA4 (`G-FBDQ9MZHMB`). Custom events — never with personal data:
 archive: `open_tool`, `open_code`, `open_journey` (tool_name), `filter_used`
 (filter_type), `featured_loaded` (tool_name), `open_full_archive`; glossary:
 `glossary_search`, `glossary_category` (category), `glossary_month_view`
 (month), `demo_used` (demo_id), `code_copied` (demo_id),
 `term_suggested_click`; challenges (archive and current.html):
 `challenge_video` and `challenge_recording` (month), `ask_host_click`,
-`qa_opened` (month); hosts.html: `host_interest_click`.
+`qa_opened` (month); hosts.html: `host_interest_click`; start-here.html:
+`prompt_copied` (step), `prompt_copy_fallback` (step — the clipboard API was
+blocked and the text was selected instead), `demo_opened` (version). Note
+`demo_opened` is the Start Here timer demos; the glossary's inline pattern
+demos use `demo_used`.
 
 ## License
 

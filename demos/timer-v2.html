@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classroom Countdown Timer</title>
+<style>
+  :root {
+    --accent: #2E7D5B;
+    --accent-dark: #256349;
+    --accent-light: #57BB8A;
+    --tint: #EEF7F2;
+    --bg: #ffffff;
+    --ink: #212121;
+    --muted: #595959;
+    --line: #e0e0e0;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2vh;
+    padding: 3vh 16px;
+    color-scheme: light;
+    /* No transition on purpose: an alert should snap, not fade. A cross-fade
+       also puts white text on a white background for a moment. */
+  }
+
+  /* Zero state: the whole screen changes, so it reads from the back of the room. */
+  body.done { background: var(--accent); color: #fff; }
+  body.done .digits { color: #fff; }
+  body.done .preset, body.done .control { border-color: rgba(255,255,255,.55); color: #fff; background: transparent; }
+  body.done .control.primary { background: #fff; color: var(--accent-dark); border-color: #fff; }
+  body.done input { color: #fff; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.14); }
+  body.done label,
+  body.done .custom,
+  body.done .custom span { color: rgba(255,255,255,.85); }
+
+  .digits {
+    font-size: clamp(4.5rem, 23vw, 17rem);
+    line-height: .95;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--ink);
+    letter-spacing: -.02em;
+  }
+
+  .banner {
+    font-size: clamp(1.4rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    min-height: 1.2em;
+  }
+
+  .presets { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .preset {
+    font: inherit; font-size: 1rem; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--accent-light); background: var(--bg); color: var(--accent-dark);
+    border-radius: 999px; padding: 7px 16px;
+  }
+  .preset:hover { background: var(--tint); }
+  .preset[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+  .control {
+    font: inherit; font-size: 1.05rem; font-weight: 600; cursor: pointer;
+    border-radius: 10px; padding: 10px 26px;
+    border: 1px solid var(--accent); background: var(--bg); color: var(--accent-dark);
+  }
+  .control.primary { background: var(--accent); color: #fff; }
+  .control.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .control:hover { background: var(--tint); }
+  .control.primary:hover { background: var(--accent-dark); }
+
+  .custom { display: flex; align-items: center; gap: 8px; font-size: .95rem; color: var(--muted); }
+  .custom input {
+    font: inherit; font-size: 1rem; width: 72px; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink);
+  }
+
+  :focus-visible { outline: 3px solid var(--accent-light); outline-offset: 3px; border-radius: 6px; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  .foot { font-size: .8rem; color: var(--muted); text-align: center; margin-top: 1vh; }
+  .foot a { color: var(--accent); }
+  body.done .foot, body.done .foot a { color: rgba(255,255,255,.8); }
+</style>
+</head>
+<body>
+
+  <div class="banner" id="banner"></div>
+
+  <!-- aria-live is off here on purpose: a screen reader announcing every second
+       would be unusable. The zero announcement lives in its own region below. -->
+  <div class="digits" id="digits" aria-live="off">05:00</div>
+
+  <div class="presets" id="presets">
+    <button class="preset" data-min="1" aria-pressed="false">1 min</button>
+    <button class="preset" data-min="2" aria-pressed="false">2 min</button>
+    <button class="preset" data-min="3" aria-pressed="false">3 min</button>
+    <button class="preset" data-min="5" aria-pressed="true">5 min</button>
+    <button class="preset" data-min="10" aria-pressed="false">10 min</button>
+  </div>
+
+  <div class="controls">
+    <button class="control primary" id="startPause">Start</button>
+    <button class="control" id="reset">Reset</button>
+    <span class="custom">
+      <label for="minutes">or</label>
+      <input type="number" id="minutes" value="5" min="1" max="180" step="1" aria-label="Minutes">
+      <span>min</span>
+    </span>
+  </div>
+
+  <p class="sr-only" id="announce" aria-live="assertive"></p>
+
+  <p class="foot">
+    Built by a teacher with an AI assistant, after three rounds of fixes.
+    <a href="../start-here.html">See the prompt journey &rarr;</a>
+  </p>
+
+<script>
+(function () {
+  "use strict";
+
+  var digitsEl  = document.getElementById("digits");
+  var bannerEl  = document.getElementById("banner");
+  var startBtn  = document.getElementById("startPause");
+  var resetBtn  = document.getElementById("reset");
+  var minutesEl = document.getElementById("minutes");
+  var presetsEl = document.getElementById("presets");
+  var announce  = document.getElementById("announce");
+
+  var total     = 5 * 60;  // seconds the timer resets to
+  var remaining = total;
+  var tick      = null;    // the ONE interval. Round 2 of the journey.
+  var running   = false;
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function render() {
+    var safe = Math.max(0, remaining);
+    digitsEl.textContent = pad(Math.floor(safe / 60)) + ":" + pad(safe % 60);
+  }
+
+  function clearDone() {
+    document.body.classList.remove("done");
+    bannerEl.textContent = "";
+  }
+
+  // Round 2: the first version called setInterval on every Start click, so a
+  // double tap ran two timers at once and the clock moved at double speed.
+  // Clearing any existing interval before creating one makes Start idempotent.
+  function stopTicking() {
+    if (tick !== null) { clearInterval(tick); tick = null; }
+    running = false;
+  }
+
+  function step() {
+    remaining--;
+    render();
+    if (remaining <= 0) {
+      remaining = 0;
+      stopTicking();
+      startBtn.textContent = "Start";
+      document.body.classList.add("done");
+      bannerEl.textContent = "Time's up";      // Round 1: something happens at zero.
+      announce.textContent = "Time's up.";
+    }
+  }
+
+  function start() {
+    clearDone();
+    announce.textContent = "";
+    if (remaining <= 0) remaining = total;
+    stopTicking();                              // guard, then create exactly one
+    tick = setInterval(step, 1000);
+    running = true;
+    startBtn.textContent = "Pause";
+    render();
+  }
+
+  function pause() {
+    stopTicking();
+    startBtn.textContent = "Resume";
+  }
+
+  function reset() {
+    stopTicking();
+    clearDone();
+    announce.textContent = "";
+    remaining = total;
+    startBtn.textContent = "Start";
+    render();
+  }
+
+  function setTotalMinutes(mins) {
+    var n = Math.min(180, Math.max(1, Math.round(Number(mins) || 0)));
+    total = n * 60;
+    minutesEl.value = n;
+    Array.prototype.forEach.call(presetsEl.children, function (b) {
+      b.setAttribute("aria-pressed", String(Number(b.dataset.min) === n));
+    });
+    reset();
+  }
+
+  startBtn.addEventListener("click", function () { running ? pause() : start(); });
+  resetBtn.addEventListener("click", reset);
+  minutesEl.addEventListener("change", function () { setTotalMinutes(minutesEl.value); });
+  presetsEl.addEventListener("click", function (e) {
+    var btn = e.target.closest(".preset");
+    if (btn) setTotalMinutes(btn.dataset.min);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

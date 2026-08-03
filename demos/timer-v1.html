@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Countdown Timer</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+  #display { font-size: 48px; margin: 20px; }
+  input { font-size: 16px; width: 60px; }
+  button { font-size: 16px; padding: 5px 15px; }
+  .note { margin-top: 60px; font-size: 13px; color: #777; font-family: Arial, sans-serif; }
+  .note a { color: #2E7D5B; }
+</style>
+</head>
+<body>
+  <h1>Countdown Timer</h1>
+  <label>Minutes: <input type="number" id="minutes" value="5" min="1"></label>
+  <button onclick="startTimer()">Start</button>
+  <div id="display">05:00</div>
+
+<script>
+let timeLeft = 0;
+
+function startTimer() {
+  timeLeft = document.getElementById('minutes').value * 60;
+  setInterval(function () {
+    if (timeLeft > 0) {
+      timeLeft--;
+    }
+    let m = Math.floor(timeLeft / 60);
+    let s = timeLeft % 60;
+    document.getElementById('display').textContent =
+      (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+}
+</script>
+
+  <p class="note">
+    Added afterwards, not part of the original build: this is the unedited first
+    draft from a twenty-minute conversation with an AI assistant. It works, and
+    it has a bug. Press Start twice and watch.
+    <br>
+    <a href="../start-here.html">See the build journey and the finished version &rarr;</a>
+  </p>
+</body>
+</html>

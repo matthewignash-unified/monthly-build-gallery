@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Monthly Build: Start Here</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FBDQ9MZHMB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FBDQ9MZHMB');
+</script>
+<style>
+  :root {
+    /* AI Coding for Educators palette */
+    --accent: #2E7D5B;        /* brand green — safe under white text (5.0:1) */
+    --accent-dark: color-mix(in srgb, var(--accent) 80%, black);
+    --accent-light: #57BB8A;  /* decorative only — never put white text on it */
+    --tint: #EEF7F2;          /* soft section tint — dark text only */
+    --bg: #ffffff;
+    --ink: #212121;
+    --muted: #595959;
+    --line: #e0e0e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 40px; }
+  a { color: var(--accent); }
+  a:hover { color: var(--accent-dark); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  header { padding-bottom: 12px; border-bottom: 3px solid var(--accent); }
+  header h1 { font-size: 1.35rem; margin: 0; }
+  .header-links { float: right; display: flex; gap: 12px; font-size: .85rem; margin: 3px 0 0 12px; }
+  .site-nav { display: flex; gap: 12px; }
+  .site-nav[hidden] { display: none; }
+
+  .intro { margin: 14px 0 0; font-size: 1rem; }
+  .intro strong { color: var(--accent-dark); }
+
+  h2.section {
+    font-size: 1.05rem; margin: 28px 0 14px; padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  h2.section::after {
+    content: ""; display: block; width: 44px; height: 3px;
+    background: var(--accent); border-radius: 2px; margin-top: 5px;
+  }
+  .section-body { margin: 0 0 10px; font-size: .95rem; }
+  .muted { color: var(--muted); font-size: .88rem; }
+
+  /* Try-it strip */
+  .try { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .try-card {
+    display: block; border: 1px solid var(--accent-light); border-radius: 10px;
+    padding: 12px 14px; text-decoration: none; background: var(--bg);
+  }
+  .try-card:hover { background: var(--tint); }
+  .try-card h3 { margin: 0 0 2px; font-size: .95rem; color: var(--accent-dark); }
+  .try-card p { margin: 0; font-size: .88rem; color: var(--muted); }
+  .try-card .tag {
+    display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--accent-dark); background: var(--tint);
+    border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
+  }
+  .callout {
+    margin: 12px 0 0; padding: 10px 14px; border-left: 3px solid var(--accent-light);
+    background: var(--tint); border-radius: 0 8px 8px 0; font-size: .92rem;
+  }
+
+  /* Numbered steps */
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+  .steps > li {
+    display: flex; gap: 12px; padding: 8px 0; align-items: flex-start;
+  }
+  .steps > li::before {
+    counter-increment: step; content: counter(step);
+    flex: 0 0 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: .8rem; font-weight: 700; line-height: 26px; text-align: center;
+  }
+  .steps p { margin: 0; font-size: .95rem; }
+  .steps p + p { margin-top: 4px; }
+
+  /* Prompt boxes */
+  .prompt { margin: 10px 0 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--tint); padding: 7px 12px;
+  }
+  .prompt-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--accent-dark); }
+  .prompt pre {
+    margin: 0; padding: 12px; font-size: .88rem; line-height: 1.5;
+    white-space: pre-wrap; word-wrap: break-word;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--bg); color: var(--ink);
+  }
+  .copy {
+    font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--accent); background: var(--accent); color: #fff;
+    border-radius: 7px; padding: 4px 11px; white-space: nowrap;
+  }
+  .copy:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .copy[data-state="done"] { background: var(--bg); color: var(--accent-dark); }
+
+  /* Rounds */
+  .round { border-left: 3px solid var(--accent-light); padding: 2px 0 2px 14px; margin-bottom: 20px; }
+  .round h3 { margin: 0 0 2px; font-size: .95rem; color: var(--accent-dark); }
+  .round p { margin: 0; font-size: .92rem; }
+  .round .said { color: var(--muted); font-style: italic; }
+
+  /* Next pointers */
+  .pointers { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .pointer {
+    display: block; border: 1px solid var(--accent-light); border-radius: 10px;
+    padding: 12px 14px; text-decoration: none;
+  }
+  .pointer:hover { background: var(--tint); }
+  .pointer h3 { margin: 0 0 2px; font-size: .95rem; color: var(--accent-dark); }
+  .pointer p { margin: 0; font-size: .88rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="header-links">
+      <span id="siteNav" class="site-nav">
+        <a href="current.html">This month</a>
+        <a href="index.html">Archive</a>
+        <a href="glossary.html">Glossary</a>
+        <a href="hosts.html">Hosts</a>
+      </span>
+      <a id="openFull" target="_blank" rel="noopener" hidden>Open the full page &#8599;</a>
+    </span>
+    <h1>Start here</h1>
+  </header>
+
+  <p class="intro">
+    You do not need to be a programmer to build something useful. Most tools in
+    the archive started as a conversation with an AI assistant and a real
+    classroom itch. <strong>Here is one build, start to finish, in about twenty
+    minutes.</strong> Try the finished thing first, then make your own.
+  </p>
+
+  <h2 class="section">The need</h2>
+  <p class="section-body">
+    You want a countdown on the board for a four-minute turn-and-talk. So you
+    open YouTube, search "5 minute timer", sit through an ad, and get one that
+    plays music you did not ask for. Every single time. It is a small annoyance,
+    it happens weekly, and it is exactly the size of problem worth fixing.
+  </p>
+
+  <h2 class="section">See it before you build it</h2>
+  <p class="section-body">
+    Two real files, both hosted so you can open them right now. Same teacher,
+    same afternoon, twenty minutes apart.
+  </p>
+  <div class="try">
+    <a class="try-card" href="demos/timer-v1.html" target="_blank" rel="noopener" data-demo="v1">
+      <span class="tag">First try</span>
+      <h3>The twenty-minute version</h3>
+      <p>One prompt, one answer, no edits. It counts down. That is all it does.</p>
+    </a>
+    <a class="try-card" href="demos/timer-v2.html" target="_blank" rel="noopener" data-demo="v2">
+      <span class="tag">Three rounds later</span>
+      <h3>The classroom version</h3>
+      <p>Readable from the back row, pauses, presets, and it tells you when time is up.</p>
+    </a>
+  </div>
+  <p class="callout">
+    Open the first one and press <strong>Start twice</strong>. The clock runs at
+    double speed. That bug shipped in the first draft, it was only found by
+    using it in a real lesson, and fixing it is round two below. This is the
+    part that usually gets left out of tutorials, and it is the part worth
+    reading.
+  </p>
+
+  <h2 class="section">Build your own in twenty minutes</h2>
+  <ol class="steps">
+    <li>
+      <div>
+        <p>Open Claude, ChatGPT, or Gemini. Whichever one you already have. Paste this in.</p>
+        <div class="prompt">
+          <div class="prompt-head">
+            <span class="prompt-label">The starter prompt</span>
+            <button class="copy" type="button" data-step="starter">Copy</button>
+          </div>
+          <pre>I'm a teacher and I have never written code before. I want a countdown timer I can show on my classroom projector.
+
+I should be able to type in a number of minutes, press start, and watch it count down in big numbers.
+
+Please make it one single HTML file with everything inside it, so I can save it and open it by double-clicking. Do not use any libraries or anything I have to install.
+
+After the code, tell me in plain language how to save the file and open it.</pre>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <p>It will hand you a block of code. Copy the whole thing.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <p>Open a plain text editor and paste it in. Save it as <strong>timer.html</strong>.</p>
+        <p class="muted">
+          On a Mac, TextEdit starts in rich text and will quietly break the file.
+          Open TextEdit, then Format &rarr; Make Plain Text, then paste and save.
+          On Windows, Notepad works as is. Make sure the name ends in
+          <strong>.html</strong> and not <strong>.txt</strong>.
+        </p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <p>Double-click the file. It opens in your browser and it works.</p>
+        <p class="muted">
+          There is no website to set up and nothing to sign up for. A single HTML
+          file runs straight off your own computer.
+        </p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <p>Use it in class tomorrow. That is the whole build.</p>
+      </div>
+    </li>
+  </ol>
+
+  <h2 class="section">Then keep going: three rounds</h2>
+  <p class="section-body">
+    Nothing below came from planning ahead. Each one came from putting the timer
+    on an actual projector and finding out what was wrong with it. Paste these
+    into the same conversation, one at a time.
+  </p>
+
+  <div class="round">
+    <h3>Round 1: nobody could read it</h3>
+    <p class="said">The numbers were fine on a laptop and useless from the back row, and when it hit zero the screen just sat there.</p>
+    <div class="prompt">
+      <div class="prompt-head">
+        <span class="prompt-label">What I asked next</span>
+        <button class="copy" type="button" data-step="round1">Copy</button>
+      </div>
+      <pre>Two problems when I used this in class today.
+
+The numbers are too small to read from the back of the room. Make them fill most of the screen.
+
+And when it reaches zero, nothing happens, so I miss it while I'm talking to a student. Make the whole screen change colour and say the time is up.</pre>
+    </div>
+  </div>
+
+  <div class="round">
+    <h3>Round 2: it ran at double speed</h3>
+    <p class="said">I tapped Start twice because I was not sure the first tap landed. The clock started eating two seconds a second.</p>
+    <div class="prompt">
+      <div class="prompt-head">
+        <span class="prompt-label">What I asked next</span>
+        <button class="copy" type="button" data-step="round2">Copy</button>
+      </div>
+      <pre>There's a bug. If I press Start twice, the timer counts down twice as fast, and pressing it three times makes it three times as fast.
+
+Please fix it so pressing Start again does not stack up extra timers, and explain in plain language what was causing it.</pre>
+    </div>
+    <p class="muted" style="margin-top:8px">
+      Ask for the explanation, not just the fix. This one is worth understanding:
+      every press was starting a brand new clock and none of them were ever
+      stopped. It is one of the most common bugs in AI-written timers, and once
+      you have seen it you will spot it everywhere.
+    </p>
+  </div>
+
+  <div class="round">
+    <h3>Round 3: it did not fit how I actually teach</h3>
+    <p class="said">A discussion was going well and I had no way to hold the clock. And I was typing "4" into the box for the fourth time that day.</p>
+    <div class="prompt">
+      <div class="prompt-head">
+        <span class="prompt-label">What I asked next</span>
+        <button class="copy" type="button" data-step="round3">Copy</button>
+      </div>
+      <pre>Two more things.
+
+I need to pause the timer when a discussion is running long, and then resume it, plus a reset button that puts it back to the start.
+
+And I use the same few lengths every day, so add quick buttons for 1, 2, 3, 5 and 10 minutes instead of typing the number each time.</pre>
+    </div>
+  </div>
+
+  <p class="section-body">
+    Three rounds, maybe fifteen more minutes, and the second demo above is what
+    came out. <strong>That sequence is the prompt journey</strong>, and it is the
+    thing this community actually shares. Not the finished file. The wrong turns.
+  </p>
+
+  <h2 class="section">Putting it online, if you want to</h2>
+  <p class="section-body">
+    You do not need to. The file works on your own machine and that is enough for
+    most tools. You only need a web address when a colleague asks for it, or when
+    you want to submit a build so others can try it.
+  </p>
+  <p class="section-body">
+    When that happens: go to <a href="https://app.netlify.com/drop" target="_blank" rel="noopener">Netlify Drop</a>,
+    drag your <strong>timer.html</strong> onto the page, and it hands you a link
+    that anyone can open. No account needed to try it. That is the entire step.
+  </p>
+  <p class="muted">
+    GitHub Pages, Vercel and Google Apps Script all do the same job and are worth
+    knowing later. Pick one thing now, not four.
+  </p>
+
+  <h2 class="section">What round four would be</h2>
+  <p class="section-body">
+    The classroom version above is not finished, and it is on the site anyway.
+    The space bar should start and pause it. There should be a fullscreen button.
+    A soft chime at zero would help on days the projector is behind you. None of
+    that is built yet.
+  </p>
+  <p class="section-body">
+    That is deliberate. Small and real beats ambitious and abandoned, and a tool
+    you actually used this week is worth more than one you are still perfecting.
+    <strong>Half-working counts.</strong> Bring it anyway.
+  </p>
+
+  <h2 class="section">Where to go next</h2>
+  <div class="pointers">
+    <a class="pointer" href="current.html">
+      <h3>This month's challenge</h3>
+      <p>Build along with everyone else.</p>
+    </a>
+    <a class="pointer" href="index.html">
+      <h3>Archive</h3>
+      <p>See what teachers have built.</p>
+    </a>
+    <a class="pointer" href="glossary.html">
+      <h3>Glossary</h3>
+      <p>Learn the words.</p>
+    </a>
+  </div>
+</div>
+
+<script>
+const ANALYTICS_DEBUG = false;
+
+function track(eventName, params = {}) {
+  if (ANALYTICS_DEBUG) console.log("[analytics]", eventName, params);
+  if (typeof gtag === "function") gtag("event", eventName, params);
+}
+
+// ── Copy buttons ─────────────────────────────────────────────────────────────
+// navigator.clipboard needs a secure context and can be blocked inside an
+// iframe, so fall back to execCommand, then to simply selecting the text.
+function copyText(text, pre) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise((resolve, reject) => {
+    const scratch = document.createElement("textarea");
+    scratch.value = text;
+    scratch.setAttribute("readonly", "");
+    scratch.style.position = "fixed";
+    scratch.style.opacity = "0";
+    document.body.appendChild(scratch);
+    scratch.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch { ok = false; }
+    document.body.removeChild(scratch);
+    if (ok) return resolve();
+    // Last resort: highlight it so the reader can press the shortcut themselves.
+    const range = document.createRange();
+    range.selectNodeContents(pre);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    reject();
+  });
+}
+
+document.querySelectorAll(".copy").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const pre = btn.closest(".prompt").querySelector("pre");
+    const step = btn.dataset.step;
+    copyText(pre.textContent, pre)
+      .then(() => {
+        btn.textContent = "Copied";
+        btn.dataset.state = "done";
+        track("prompt_copied", { step });
+      })
+      .catch(() => {
+        btn.textContent = "Selected, press copy";
+        btn.dataset.state = "done";
+        track("prompt_copy_fallback", { step });
+      })
+      .finally(() => {
+        setTimeout(() => { btn.textContent = "Copy"; delete btn.dataset.state; }, 2500);
+      });
+  });
+});
+
+document.querySelectorAll("[data-demo]").forEach(link => {
+  link.addEventListener("click", () => track("demo_opened", { version: link.dataset.demo }));
+});
+
+// Embedded in the Google Site: its tabs provide navigation, so swap the nav
+// for an escape hatch to the standalone page.
+if (window.self !== window.top) {
+  document.getElementById("siteNav").hidden = true;
+  const openFull = document.getElementById("openFull");
+  openFull.href = window.location.href;
+  openFull.hidden = false;
+}
+</script>
+</body>
+</html>
